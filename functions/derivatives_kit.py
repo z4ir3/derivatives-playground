@@ -5,28 +5,69 @@ from scipy.stats import norm
 
 class STKOption:
     
-    def __init__(self, S, K, T, r, sigma, q = 0, optype = "C"):
+    def __init__(self, CP, S, K, T, r, sigma, q = 0):
         '''
-        - S      : underlying Price 
-        - K      : strike Price
-        - r      : risk-free interest rate
-        - T      : time-to-maturity in years 
-        - sigma  : implied volatility
-        - q      : 
-        - optype : either "C" (Call) or "P" (Put)
+        - CP    : either "C" (Call) or "P" (Put)
+        - S     : underlying Price 
+        - K     : strike Price
+        - r     : risk-free interest rate
+        - T     : time-to-maturity in years 
+        - sigma : implied volatility
+        - q     : dividend yield
         '''
-        self.S      = S    
-        self.K      = K
-        self.T      = T
-        self.r      = r 
-        self.sigma  = sigma
-        self.q      = q
-        self.optype = optype
+        self.CP    = STKOption.valid_option(CP)
+        self.S     = STKOption.valid_underlying(S)    
+        self.K     = STKOption.valid_strike(K)
+        self.T     = STKOption.valid_maturity(T)
+        self.r     = r 
+        self.sigma = STKOption.valid_vola(sigma)
+        self.q     = STKOption.valid_yield(q)
     
+    @staticmethod 
+    def valid_option(CP):
+        if CP == "C" or CP == "P":
+            return CP
+        else:
+            raise ValueError("First argument 'CP' must be either 'C' or 'P'")
+            
+    @staticmethod 
+    def valid_underlying(S):
+        if S > 0:
+            return S
+        else:
+            raise ValueError("Second argument 'S' must be greater than 0")
+            
+    @staticmethod 
+    def valid_strike(K):
+        if K > 0:
+            return K
+        else:
+            raise ValueError("Third argument 'K' must be greater than 0")
     
+    @staticmethod 
+    def valid_maturity(T):
+        if T >= 0:
+            return T
+        else:
+            raise ValueError("Fourth argument 'T' cannot be negative")
+            
+    @staticmethod 
+    def valid_vola(sigma):
+        if sigma > 0:
+            return sigma
+        else:
+            raise ValueError("Sixth argument 'sigma' must be greater than 0")
+    
+    @staticmethod 
+    def valid_yield(q):
+        if q >= 0:
+            return q
+        else:
+            raise ValueError("Seventh argument 'q' cannot be negative")
+     
     @property
     def params(self):
-        return {"type"  : self.optype,
+        return {"Type"  : self.CP,
                 "S"     : self.S, 
                 "K"     : self.K, 
                 "T"     : self.T,
@@ -36,16 +77,11 @@ class STKOption:
 
     
     @staticmethod
-    def N(x, mu = 0, sigma = 1):
+    def N(x):
         '''
-        Normal CDF evaluated at the input point x.
-        
-        inputs:
-        - x     : evaluation point 
-        - mu    : mean 
-        - sigma : standard deviation 
+        Standard Normal CDF evaluated at the input point x.
         '''  
-        return norm.cdf(x, loc=mu, scale=sigma)
+        return norm.cdf(x, loc=0, scale=1)
 
     
     def h(self):
@@ -58,7 +94,7 @@ class STKOption:
         '''
         Black-Scholes pricing model - Premium (Price)
         '''
-        if self.optype == "C":
+        if self.CP == "C":
             
             if self.T > 0:
                 # The Call has not expired yet
@@ -68,7 +104,7 @@ class STKOption:
                 # The Call has expired
                 return max(self.S - self.K, 0)
             
-        elif self.optype == "P":
+        else: #elif self.CP == "P":
 
             if self.T > 0:
                 # The Put has not expired yet
@@ -77,18 +113,14 @@ class STKOption:
             else:
                 # The Put has expired
                 return max(self.K - self.S, 0)
-            
-        else: 
-            raise ValueError('Wrong Option Type')
+        
     
     
     def delta(self):
         '''
         Black-Scholes pricing model - Delta
-        '''
-        pass
-    
-        if self.optype == "C":
+        '''    
+        if self.CP == "C":
             
             if self.T > 0:
                 # The Call has not expired yet
@@ -101,7 +133,7 @@ class STKOption:
                 else: 
                     return 0
             
-        elif self.optype == "P":
+        else: #elif self.CP == "P":
             
             if self.T > 0:
                 # The Put has not expired yet
@@ -118,9 +150,7 @@ class STKOption:
     def gamma(self):
         '''
         Black-Scholes pricing model - Gamma 
-        '''
-        pass
-    
+        '''    
         # Gamma is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
@@ -130,12 +160,11 @@ class STKOption:
             # The Option has expired
             return 0
     
+    
     def vega(self):
         '''
         Black-Scholes pricing model - Vega 
-        '''
-        pass
-    
+        '''    
         # Vega is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
@@ -145,5 +174,14 @@ class STKOption:
             # The Option has expired
             return 0          
         
+        
+        
+    def greeks(self):
+        '''
+        Black-Scholes pricing model - All greeks
+        '''   
+        return {"Delta": np.round( STKOption.delta(self), 2),
+                "Gamma": np.round( STKOption.gamma(self), 2),
+                "Vega" : np.round( STKOption.vega(self), 2)}
 
 # end scriptfile
