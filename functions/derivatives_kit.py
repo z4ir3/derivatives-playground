@@ -3,7 +3,7 @@ import numpy as np
 from scipy.stats import norm
 
 
-class STKOption:
+class BSOption:
     
     def __init__(self, CP, S, K, T, r, sigma, q = 0):
         '''
@@ -15,13 +15,13 @@ class STKOption:
         - sigma : implied volatility
         - q     : dividend yield
         '''
-        self.CP    = STKOption.valid_option(CP)
-        self.S     = STKOption.valid_underlying(S)    
-        self.K     = STKOption.valid_strike(K)
-        self.T     = STKOption.valid_maturity(T)
+        self.CP    = BSOption.valid_option(CP)
+        self.S     = BSOption.valid_underlying(S)    
+        self.K     = BSOption.valid_strike(K)
+        self.T     = BSOption.valid_maturity(T)
         self.r     = r 
-        self.sigma = STKOption.valid_vola(sigma)
-        self.q     = STKOption.valid_yield(q)
+        self.sigma = BSOption.valid_vola(sigma)
+        self.q     = BSOption.valid_yield(q)
     
     @staticmethod 
     def valid_option(CP):
@@ -180,8 +180,9 @@ class STKOption:
         '''
         Black-Scholes pricing model - All greeks
         '''   
-        return {"Delta": np.round( STKOption.delta(self), 2),
-                "Gamma": np.round( STKOption.gamma(self), 2),
-                "Vega" : np.round( STKOption.vega(self), 2)}
+        return {"Delta": np.round( BSOption.delta(self), 2),
+                "Gamma": np.round( BSOption.gamma(self), 2),
+                "Vega" : np.round( BSOption.vega(self), 2)}
+
 
 # end scriptfile
