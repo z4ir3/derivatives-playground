@@ -77,17 +77,22 @@ class BSOption:
 
     
     @staticmethod
-    def N(x):
+    def N(x, cumul=1):
         '''
-        Standard Normal CDF evaluated at the input point x.
+        Standard Normal CDF or PDF evaluated at the input point x.
         '''  
-        return norm.cdf(x, loc=0, scale=1)
+        if cumul:
+            # Returns the CDF
+            return norm.cdf(x, loc=0, scale=1)
+        else:
+            return norm.pdf(x, loc=0, scale=1)
 
     
     def h(self):
-        haux = np.log( (self.S / self.K) * np.exp( (self.r - self.q)*self.T ) )  
-        hh   = haux / (self.sigma * np.sqrt(self.T))  +  0.5 * self.sigma * np.sqrt(self.T)        
-        return hh
+        # haux = np.log( (self.S / self.K) * np.exp( (self.r - self.q)*self.T ) )  
+        # hh   = haux / (self.sigma * np.sqrt(self.T))  +  0.5 * self.sigma * np.sqrt(self.T)   
+        return ( np.log(self.S / self.K) + (self.r - self.q + 0.5*self.sigma**2)*self.T ) / (self.sigma * np.sqrt(self.T))
+        
 
     
     def price(self):
@@ -132,6 +137,7 @@ class BSOption:
                     return +1
                 else: 
                     return 0
+                
             
         else: #elif self.CP == "P":
             
@@ -141,7 +147,7 @@ class BSOption:
             
             else:
                 # The Put has expired
-                if self.price(self) > 0:
+                if self.price() > 0:
                     return -1
                 else:             
                     return 0
@@ -154,7 +160,7 @@ class BSOption:
         # Gamma is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
-            return +np.exp(-self.q*self.T) * self.N(self.h()) / (self.S * self.sigma * np.sqrt(self.T))
+            return +np.exp(-self.q*self.T) * self.N(self.h(), cumul=0) / (self.S * self.sigma * np.sqrt(self.T))
             
         else:
             # The Option has expired
@@ -168,7 +174,7 @@ class BSOption:
         # Vega is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
-            return +np.exp(-self.q*self.T) * self.S * np.sqrt(self.T) * self.N(self.h()) 
+            return +np.exp(-self.q*self.T) * self.S * np.sqrt(self.T) * self.N(self.h(), cumul=0) 
             
         else:
             # The Option has expired
