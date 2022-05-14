@@ -74,47 +74,52 @@ class BSOption:
                 "r"     : self.r,
                 "sigma" : self.sigma,
                 "q"     : self.q}
-
     
     @staticmethod
-    def N(x, cumul=1):
+    def N(x, cum=1):
         '''
         Standard Normal CDF or PDF evaluated at the input point x.
         '''  
-        if cumul:
+        if cum:
             # Returns the CDF
             return norm.cdf(x, loc=0, scale=1)
         else:
             return norm.pdf(x, loc=0, scale=1)
 
     
-    def h(self):
-        # haux = np.log( (self.S / self.K) * np.exp( (self.r - self.q)*self.T ) )  
-        # hh   = haux / (self.sigma * np.sqrt(self.T))  +  0.5 * self.sigma * np.sqrt(self.T)   
+
+    def d1(self):
         return ( np.log(self.S / self.K) + (self.r - self.q + 0.5*self.sigma**2)*self.T ) / (self.sigma * np.sqrt(self.T))
         
-
+    
+    
+    def d2(self):
+        return self.d1() - self.sigma * np.sqrt(self.T)
+    
+    
     
     def price(self):
         '''
         Black-Scholes pricing model - Premium (Price)
         '''
         if self.CP == "C":
-            
+            # Call Option
             if self.T > 0:
                 # The Call has not expired yet
-                return + self.S * np.exp(-self.q*self.T) * self.N(self.h())  \
-                       - self.K * np.exp(-self.r*self.T) * self.N(self.h() - self.sigma*np.sqrt(self.T))
+                return + self.S * np.exp(-self.q*self.T) * self.N(self.d1())  \
+                       - self.K * np.exp(-self.r*self.T) * self.N(self.d2())
+                       
             else:
                 # The Call has expired
                 return max(self.S - self.K, 0)
             
-        else: #elif self.CP == "P":
-
+        else: 
+            # Put Option
             if self.T > 0:
                 # The Put has not expired yet
-                return - self.S * np.exp(-self.q*self.T) * self.N(-self.h())  \
-                       + self.K * np.exp(-self.r*self.T) * self.N(-self.h() + self.sigma*np.sqrt(self.T))
+                return - self.S * np.exp(-self.q*self.T) * self.N(-self.d1())  \
+                       + self.K * np.exp(-self.r*self.T) * self.N(-self.d2())
+                       
             else:
                 # The Put has expired
                 return max(self.K - self.S, 0)
@@ -126,10 +131,10 @@ class BSOption:
         Black-Scholes pricing model - Delta
         '''    
         if self.CP == "C":
-            
+            # Call Option
             if self.T > 0:
                 # The Call has not expired yet
-                return +np.exp(-self.q*self.T) * self.N(self.h()) 
+                return np.exp(-self.q*self.T) * self.N(self.d1()) 
             
             else:
                 # The Call has expired
@@ -138,12 +143,11 @@ class BSOption:
                 else: 
                     return 0
                 
-            
-        else: #elif self.CP == "P":
-            
+        else: 
+            # Put Option
             if self.T > 0:
                 # The Put has not expired yet
-                return -np.exp(-self.q*self.T) * self.N(-self.h())
+                return np.exp(-self.q*self.T) * self.N(self.d1()) - 1
             
             else:
                 # The Put has expired
@@ -151,8 +155,22 @@ class BSOption:
                     return -1
                 else:             
                     return 0
-    
-    
+                
+                
+             
+    def Lambda(self):
+        '''
+        Black-Scholes pricing model - Labda
+        '''
+        if self.T > 0:
+            # The Option has not expired yet
+            return self.delta() * self.S / self.price()
+
+        else:
+            return 0
+
+
+                
     def gamma(self):
         '''
         Black-Scholes pricing model - Gamma 
@@ -160,11 +178,42 @@ class BSOption:
         # Gamma is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
-            return +np.exp(-self.q*self.T) * self.N(self.h(), cumul=0) / (self.S * self.sigma * np.sqrt(self.T))
+            return + np.exp(-self.q*self.T) * self.N(self.d1(), cum=0) / (self.S * self.sigma * np.sqrt(self.T))
             
         else:
             # The Option has expired
             return 0
+    
+    
+    
+    def theta(self):
+        '''
+        Black-Scholes pricing model - Theta
+        '''
+        if self.CP == "C":
+            # Call Option
+            if self.T > 0:
+                # The Call has not expired yet
+                return - np.exp(-self.q*self.T) * self.S * self.sigma * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
+                       + self.q*np.exp(-self.q*self.T) * self.S * self.N(self.d1())   \
+                       - self.r*np.exp(-self.r*self.T) * self.K * self.N(self.d2())
+            
+            else:
+                # The Call has expired
+                return 0
+            
+        else: 
+            # Put Option
+            if self.T > 0:
+                # The Put has not expired yet
+                return - np.exp(-self.q*self.T) * self.S * self.sigma * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
+                       - self.q*np.exp(-self.q*self.T) * self.S * (1 - self.N(self.d1()))   \
+                       + self.r*np.exp(-self.r*self.T) * self.K * (1 - self.N(self.d2()))
+                       
+            else:
+                # The Put has expired
+                return 0
+
     
     
     def vega(self):
@@ -174,21 +223,23 @@ class BSOption:
         # Vega is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
-            return +np.exp(-self.q*self.T) * self.S * np.sqrt(self.T) * self.N(self.h(), cumul=0) 
+            return +np.exp(-self.q*self.T) * self.S * np.sqrt(self.T) * self.N(self.d1(), cum=0) 
             
         else:
             # The Option has expired
             return 0          
         
-        
+            
         
     def greeks(self):
         '''
         Black-Scholes pricing model - All greeks
         '''   
-        return {"Delta": np.round( BSOption.delta(self), 2),
-                "Gamma": np.round( BSOption.gamma(self), 2),
-                "Vega" : np.round( BSOption.vega(self), 2)}
+        return {"Lambda": np.round( BSOption.Lambda(self), 2),
+                "Delta" : np.round( BSOption.delta(self),  2),
+                "Gamma" : np.round( BSOption.gamma(self),  2),
+                "Theta" : np.round( BSOption.theta(self),  2),
+                "Vega"  : np.round( BSOption.vega(self) ,  2)}
 
 
 # end scriptfile

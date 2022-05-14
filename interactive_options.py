@@ -9,7 +9,7 @@ Created on Sat May 14 18:46:28 2022
 
 
 import numpy as np
-import pandas as pd
+# import pandas as pd
 from functions.blackscholes import BSOption
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
@@ -23,32 +23,29 @@ def interactive_option_plot(IVal):
     '''    
     '''
     
-    # Create the set of Underlying prices 
+    #### Create the set of Underlying prices 
     IVal["Smin"] = round(IVal["S"] * (1 - 0.50), 0)
     IVal["Smax"] = round(IVal["S"] * (1 + 0.50), 0), 
     IVal["Sset"] = np.linspace(IVal["Smin"], IVal["Smax"], IVal["Sres"])
     
-    # Compute Option data
+    #### Option data
     option  = [ BSOption(IVal["CP"], 
                          s, 
                          IVal["K"], 
                          IVal["T"], 
-                         IVal["r"] / 100, 
-                         IVal["v"], 
+                         IVal["r"]/100, 
+                         IVal["v"]/100, 
                          q = IVal["q"]) for s in IVal["Sset"] ]
     
-    # Compute prices and greeks 
+    # Prices and greeks 
     price = [o.price() for o in option]
     delta = [o.delta() for o in option]
     gamma = [o.gamma() for o in option]    
     vega  = [o.vega()  for o in option]
 
-
     
-    
-    
-    # Set up plot window
-    fig = plt.figure(figsize=(10,7), facecolor="whitesmoke")
+    #### Set up plot window
+    fig = plt.figure(figsize=(10,8), facecolor="whitesmoke")
     #
     plt.subplots_adjust(left   = 0.1,
                         bottom = 0.30,
@@ -58,8 +55,8 @@ def interactive_option_plot(IVal):
     ax = ax.flatten()
 
 
-    # Maturity slider (xpos, ypos, width, height)
-    slider_T_ax = plt.axes([0.25, 0.15, 0.55, 0.02])
+    #### Maturity slider (xpos, ypos, width, height)
+    slider_T_ax = plt.axes([0.3, 0.15, 0.50, 0.015])
     slider_T    = Slider(ax        = slider_T_ax, 
                          label     = "Time to Maturity (years)", 
                          valmin    = IVal["Tmin"], 
@@ -70,9 +67,9 @@ def interactive_option_plot(IVal):
                          initcolor = "gray")
     
     # Maturity slider (xpos, ypos, width, height)
-    slider_r_ax = plt.axes([0.25, 0.10, 0.55, 0.02])
+    slider_r_ax = plt.axes([0.3, 0.10, 0.50, 0.015])
     slider_r    = Slider(ax        = slider_r_ax, 
-                         label     = "Risk-free rate (%)", 
+                         label     = "Risk-free interest rate (%)", 
                          valmin    = IVal["rmin"],  
                          valmax    = IVal["rmax"], 
                          valstep   = IVal["Tstp"], 
@@ -80,11 +77,25 @@ def interactive_option_plot(IVal):
                          color     = "gray",
                          initcolor = "gray")
     
+    # Maturity slider (xpos, ypos, width, height)
+    slider_v_ax = plt.axes([0.3, 0.05, 0.50, 0.015])
+    slider_v    = Slider(ax        = slider_v_ax, 
+                         label     = "Volatility (%)", 
+                         valmin    = IVal["vmin"],  
+                         valmax    = IVal["vmax"], 
+                         valstep   = IVal["vstp"], 
+                         valinit   = IVal["v"],   
+                         color     = "gray",
+                         initcolor = "gray")
+    
+    
     # Update plot for slider moves
     def updateplot(val):
         # Current sliders values  
         current_T = slider_T.val
         current_r = slider_r.val
+        current_v = slider_v.val
+
         
         # Update Option
         option = [ BSOption(IVal["CP"], 
@@ -92,7 +103,7 @@ def interactive_option_plot(IVal):
                             IVal["K"], 
                             current_T, 
                             current_r / 100, 
-                            IVal["v"], 
+                            current_v / 100, 
                             q = IVal["q"]) for s in IVal["Sset"] ]
     
         # Recompute Greeks               
@@ -108,11 +119,17 @@ def interactive_option_plot(IVal):
         p3.set_ydata( vegas  )
         
         # Set new ylims
+        #
+        # Price
         ax[0].set_ylim([min(prices) - 0.1*max(prices), max(prices) + 0.1*max(prices)])
+        # 
+        # Delta
         if IVal["CP"] == "C":
             ax[1].set_ylim([min(deltas) - 0.1*max(deltas), max(deltas) + 0.1*max(deltas)])
         else:
             ax[1].set_ylim([min(deltas) + 0.1*min(deltas), max(deltas) - 0.1*min(deltas)])            
+        #
+        # Gamma and Vega
         if current_T != 0:
             ax[2].set_ylim([min(gammas) - 0.1*max(gammas), max(gammas) + 0.1*max(gammas)])            
             ax[3].set_ylim([min(vegas)  - 0.1*max(vegas),  max(vegas)  + 0.1*max(vegas)])
@@ -124,6 +141,8 @@ def interactive_option_plot(IVal):
     # Calling the updateplot change for slider movements
     slider_T.on_changed(updateplot)
     slider_r.on_changed(updateplot)
+    slider_v.on_changed(updateplot)
+  
   
     # First plot (the ne that will be updated as soon as sliders are touched)  
     p0, = ax[0].plot(IVal["Sset"], price, color="tab:blue")
@@ -187,22 +206,24 @@ if __name__ == "__main__":
     IVal["S"]       = 100       # underlying price
     IVal["K"]       = 100       # strike price  
     IVal["T"]       = 2         # time-to-maturity 
-    IVal["r"]       = 2         # risk-free interest rate (in percentage)
-    IVal["v"]       = 0.3       # (implied) volatility 
+    IVal["r"]       = 2         # risk-free interest rate (percentage)
+    IVal["v"]       = 30        # (implied) volatility (percentage)
     IVal["q"]       = 0         # dividend yield
     # 
     IVal["Sres"]    = 200       # undelying resolution (number of prices for x-axis plot)
     #
     # 
     IVal["Tmin"]    = 0         # time-to-maturity slider min value
-    IVal["Tmax"]    = 3.5       # time-to-maturity slider max value
+    IVal["Tmax"]    = 5       # time-to-maturity slider max value
     IVal["Tstp"]    = 0.02      # time-to-maturity slider step value
     #
-    IVal["rmin"]    = 0.1       # risk-free interesr rate slider min value (percentage)
-    IVal["rmax"]    = 8         # risk-free interesr rate slider max value (percentage)
-    IVal["rstp"]    = 0.1       # risk-free interesr rate slider step value (percentage)
-
-
+    IVal["rmin"]    = 0.1       # risk-free interest rate slider min value (percentage)
+    IVal["rmax"]    = 7         # risk-free interest rate slider max value (percentage)
+    IVal["rstp"]    = 0.1       # risk-free interest rate slider step value (percentage)
+    #
+    IVal["vmin"]    = 1         # (implied) volatility slider min value (percentage)
+    IVal["vmax"]    = 100       # (implied) volatility slider max value (percentage)
+    IVal["vstp"]    = 1         # (implied) volatility slider step value (percentage)
 
     # Calling the interactive plot routine    
     option = interactive_option_plot(IVal)
