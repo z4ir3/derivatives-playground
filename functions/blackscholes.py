@@ -162,14 +162,18 @@ class BSOption:
         '''
         Black-Scholes pricing model - Labda
         '''
-        if self.T > 0:
-            # The Option has not expired yet
-            return self.delta() * self.S / self.price()
-
+        if self.CP == "C":
+            if self.delta() < 1e-10 or self.price() < 1e-10:
+                return +np.inf
+            else:
+                return self.delta() * self.S / self.price()
         else:
-            return 0
+            if self.delta() > -1e-10 or self.price() < 1e-10:
+                return -np.inf
+            else:
+                return self.delta() * self.S / self.price()
 
-
+                
                 
     def gamma(self):
         '''
