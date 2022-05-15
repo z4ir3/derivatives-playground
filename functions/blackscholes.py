@@ -64,7 +64,8 @@ class BSOption:
             return q
         else:
             raise ValueError("Seventh argument 'q' cannot be negative")
-     
+       
+    
     @property
     def params(self):
         return {"Type"  : self.CP,
@@ -74,6 +75,7 @@ class BSOption:
                 "r"     : self.r,
                 "sigma" : self.sigma,
                 "q"     : self.q}
+     
     
     @staticmethod
     def N(x, cum=1):
@@ -107,7 +109,7 @@ class BSOption:
             if self.T > 0:
                 # The Call has not expired yet
                 return + self.S * np.exp(-self.q*self.T) * self.N(self.d1())  \
-                       - self.K * np.exp(-self.r*self.T) * self.N(self.d2())
+                        - self.K * np.exp(-self.r*self.T) * self.N(self.d2())
                        
             else:
                 # The Call has expired
@@ -118,7 +120,7 @@ class BSOption:
             if self.T > 0:
                 # The Put has not expired yet
                 return - self.S * np.exp(-self.q*self.T) * self.N(-self.d1())  \
-                       + self.K * np.exp(-self.r*self.T) * self.N(-self.d2())
+                        + self.K * np.exp(-self.r*self.T) * self.N(-self.d2())
                        
             else:
                 # The Put has expired
@@ -199,8 +201,8 @@ class BSOption:
             if self.T > 0:
                 # The Call has not expired yet
                 return - np.exp(-self.q*self.T) * self.S * self.sigma * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
-                       + self.q*np.exp(-self.q*self.T) * self.S * self.N(self.d1())   \
-                       - self.r*np.exp(-self.r*self.T) * self.K * self.N(self.d2())
+                        + self.q*np.exp(-self.q*self.T) * self.S * self.N(self.d1())   \
+                        - self.r*np.exp(-self.r*self.T) * self.K * self.N(self.d2())
             
             else:
                 # The Call has expired
@@ -211,8 +213,8 @@ class BSOption:
             if self.T > 0:
                 # The Put has not expired yet
                 return - np.exp(-self.q*self.T) * self.S * self.sigma * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
-                       - self.q*np.exp(-self.q*self.T) * self.S * (1 - self.N(self.d1()))   \
-                       + self.r*np.exp(-self.r*self.T) * self.K * (1 - self.N(self.d2()))
+                        - self.q*np.exp(-self.q*self.T) * self.S * (1 - self.N(self.d1()))   \
+                        + self.r*np.exp(-self.r*self.T) * self.K * (1 - self.N(self.d2()))
                        
             else:
                 # The Put has expired
@@ -244,6 +246,8 @@ class BSOption:
                 "Gamma" : np.round( BSOption.gamma(self),  2),
                 "Theta" : np.round( BSOption.theta(self),  2),
                 "Vega"  : np.round( BSOption.vega(self) ,  2)}
+
+
 
 
 # end scriptfile

@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 '''
+Interactive Black-Scholes prices and greeks plot using sliders.
+Change the option parameters in the __main__ at the bottom. 
 @author: leonardorocchi
 '''
 
@@ -230,6 +230,11 @@ if __name__ == "__main__":
     # Dictionary of initial values 
     IVal = dict()
     
+    # -------------------------------------------------------------------------
+    # CHANGE VALUES HERE
+    # -------------------------------------------------------------------------
+    
+    # Option parameters
     IVal["CP"]      = "C"       # option type: either call ("C") or put ("P")
     IVal["S"]       = 100       # underlying price
     IVal["K"]       = 100       # strike price  
@@ -237,21 +242,27 @@ if __name__ == "__main__":
     IVal["r"]       = 2         # risk-free interest rate (percentage)
     IVal["v"]       = 30        # (implied) volatility (percentage)
     IVal["q"]       = 0         # dividend yield
-    # 
+    
+    # Resolution 
     IVal["Sres"]    = 200       # underlying resolution (number of prices for x-axis plot)
-    #
-    # 
+    
+    # Time-to-Maturity slider 
     IVal["Tmin"]    = 0         # time-to-maturity slider min value
     IVal["Tmax"]    = 5         # time-to-maturity slider max value
     IVal["Tstp"]    = 0.05      # time-to-maturity slider step value
-    #
+    
+    # Risk-free rate slider 
     IVal["rmin"]    = 0.1       # risk-free interest rate slider min value (percentage)
     IVal["rmax"]    = 7         # risk-free interest rate slider max value (percentage)
     IVal["rstp"]    = 0.1       # risk-free interest rate slider step value (percentage)
-    #
+    
+    # Volatility slider
     IVal["vmin"]    = 1         # (implied) volatility slider min value (percentage)
     IVal["vmax"]    = 100       # (implied) volatility slider max value (percentage)
     IVal["vstp"]    = 1         # (implied) volatility slider step value (percentage)
+
+    # -------------------------------------------------------------------------
+
 
     # Calling the interactive plot routine    
     option = interactive_option_plot(IVal)
