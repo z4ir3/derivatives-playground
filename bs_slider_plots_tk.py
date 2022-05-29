@@ -1,3 +1,6 @@
+'''
+Copyright (c) Leonardo Rocchi
+'''
 # from ast import Return
 import numpy as np
 import tkinter as tk
@@ -22,7 +25,9 @@ class Window:
         self.root.title("Black-Scholes playground") 
         self.root.geometry("1250x850")
 
-        # Left main box 
+        # ---------------
+        # Left frame
+        # ---------------
         self.framel = tk.Frame(master = self.root, relief = tk.RAISED, bg="#E4E4E0", borderwidth = 1)
         self.framel.place(relx = 0.02, rely = 0.02, relwidth = 0.3, relheight = 0.95)
     
@@ -33,8 +38,6 @@ class Window:
         self.label_CP.columnconfigure(0, weight = 1, minsize = 15)
         self.label_CP.grid(row = 0, column = 0, padx = 25, pady = 10, sticky="nsew")
         #
-        # cp = tk.StringVar()
-        # self.entry_CP = tk.Entry(master = self.framel, width = 6, textvariable = cp)
         self.entry_CP = tk.Entry(master = self.framel, width = 6)
         self.entry_CP.rowconfigure(0, weight = 1, minsize = 15)
         self.entry_CP.columnconfigure(0, weight = 1, minsize = 15)
@@ -42,8 +45,7 @@ class Window:
         # Default value
         self.entry_CP.insert(0, "C")
         
-        
-        
+            
         # Strike Price
         self.label_K = tk.Label(master = self.framel, text="Strike Price")
         self.label_K.rowconfigure(1, weight=1, minsize=15)
@@ -56,8 +58,7 @@ class Window:
         self.entry_K.grid(row=1, column=1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_K.insert(0, 100)
-        
-        
+            
         
         # Maturity 
         self.label_T = tk.Label(master = self.framel, text="Maturity (years)")
@@ -73,7 +74,6 @@ class Window:
         self.entry_T.insert(0, 0.25)
         
         
-        
         # Interest Rate 
         self.label_r = tk.Label(master = self.framel, text="Interest rate (%)")
         self.label_r.rowconfigure(3, weight=1, minsize=15)
@@ -85,9 +85,8 @@ class Window:
         self.entry_r.columnconfigure(0, weight=1, minsize=6)
         self.entry_r.grid(row=3, column=1, padx=20, pady=10, sticky="nsew")
         # Default value
-        self.entry_r.insert(0, 1)
+        self.entry_r.insert(0, 2)
         
-    
 
         # Volatility
         self.label_v = tk.Label(master = self.framel, text="Volatility (%)")
@@ -102,6 +101,7 @@ class Window:
         # Default value
         self.entry_v.insert(0, 30)
 
+
         # Dividend Yield
         self.label_q = tk.Label(master = self.framel, text="Dividend Yield")
         self.label_q.rowconfigure(5, weight=1, minsize=15)
@@ -114,14 +114,6 @@ class Window:
         self.entry_q.grid(row=5, column=1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_q.insert(0, 0)
-
-
-
-
-
-
-
-
 
 
         # Get inserted data 
@@ -162,18 +154,18 @@ class Window:
 
 
         # Define sliders
-        self.slider_T_ax = plt.axes([0.3, 0.15, 0.50, 0.015])
-        self.slider_r_ax = plt.axes([0.3, 0.10, 0.50, 0.015])
-        self.slider_v_ax = plt.axes([0.3, 0.05, 0.50, 0.015])
+        self.slider_T_ax = plt.axes([0.3, 0.12, 0.50, 0.015])
+        self.slider_r_ax = plt.axes([0.3, 0.07, 0.50, 0.015])
+        self.slider_v_ax = plt.axes([0.3, 0.02, 0.50, 0.015])
 
         self.slider_T = self.define_slider_T()
         self.slider_r = self.define_slider_r()
         self.slider_v = self.define_slider_v()
 
-
-
         # Calling the interactive plot method as soon as a slider is touched
         self.slider_T.on_changed(self.onslide)
+        self.slider_r.on_changed(self.onslide)
+        self.slider_v.on_changed(self.onslide)
 
 
         # Button calculate option
@@ -194,6 +186,7 @@ class Window:
         else:
             return CP
 
+
     def get_K(self):
         '''
         Get the Strike price entry
@@ -203,6 +196,7 @@ class Window:
             messagebox.showerror("Strike value error", "Enter at least a strike price equal to 1")
         else:
             return K
+
 
     def get_T(self):
         '''
@@ -215,27 +209,29 @@ class Window:
         else:
             return T
 
+
     def get_r(self):
         '''
         Get the Interest Rate entry 
         '''
-        r = float(self.entry_r.get()) / 100 
-        if r < 0.0001:
+        r = float(self.entry_r.get())
+        if r < 0.01:
             # Returns a mininum of 0.01% (1 basis point)
             messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01")
         else:
-            return r
+            return r / 100
+
 
     def get_v(self):
         '''
         Get the Volatility entry 
         '''
-        v = float(self.entry_v.get()) / 100 
-        if v < 0.01:
+        v = float(self.entry_v.get()) 
+        if v < 1:
             # Returns a mininum of 1%
             messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1")
         else:
-            return v
+            return v / 100
 
 
     def get_q(self):
@@ -254,18 +250,20 @@ class Window:
     def get_Smin(K):
         return round(K * (1 - 0.60), 0)
 
+
     @staticmethod 
     def get_Smax(K):
         return round(K * (1 + 0.60), 0)
+
 
     @staticmethod 
     def get_Sset(Smin, Smax):
         return np.linspace(Smin, Smax, 150)
 
 
-
     def define_slider_T(self):
         '''
+        Define slider for maturitiey values 
         '''
         return Slider(ax = self.slider_T_ax, 
                     label     = "Time to Maturity (years)", 
@@ -275,35 +273,39 @@ class Window:
                     valinit   = self.T,
                     color     = "gray",
                     initcolor = "gray")
-    
+
+
     def define_slider_r(self):
         '''
+        Define slider for interest rate values 
         '''
         return Slider(ax      = self.slider_r_ax, 
                     label     = "Risk-free interest rate (%)", 
-                    valmin    = 0.1,  
+                    valmin    = 1,  
                     valmax    = 7, 
                     valstep   = 0.1, 
-                    valinit   = self.r,   
+                    valinit   = self.r * 100,   
                     color     = "gray",
                     initcolor = "gray")
-    
+
+
     def define_slider_v(self):
         '''
+        Define slider for volatility values 
         '''
         return Slider(ax      = self.slider_v_ax, 
                     label     = "Volatility (%)", 
                     valmin    = 1,  
                     valmax    = 100, 
                     valstep   = 1, 
-                    valinit   = self.v,   
+                    valinit   = self.v * 100,   
                     color     = "gray",
                     initcolor = "gray")
 
 
-
     def computeoption(self):
         '''
+        Calculate option price and greeks given the input data
         '''        
         # Recover inserted data 
         self.CP     = self.get_CP()
@@ -329,148 +331,79 @@ class Window:
         self.plotoption()
 
 
-
-
     def plotoption(self):
         '''
+        Plot 
         '''
-        # self.setupfigure()
-        print("button pushed")
         
+        # Clear current axis 
         for axn in range(len(self.ax)):
             self.ax[axn].clear()
 
-
+        # Get prices and greeks for all set of underlyings
         self.prices  = [o.price()     for o in self.option]
         self.lambdas = [o.Lambda()    for o in self.option]
-        
-        # print(self.prices[30:40])
-        # print(self.ax[0])
+        self.deltas  = [o.delta()     for o in self.option] 
+        self.gammas  = [o.gamma()*100 for o in self.option] 
+        self.thetas  = [o.theta()     for o in self.option] 
+        self.vegas   = [o.vega()      for o in self.option]  
         
         self.p0, = self.ax[0].plot(self.Sset, self.prices,  color="tab:blue")
         self.p1, = self.ax[1].plot(self.Sset, self.lambdas, color="chocolate")
+        self.p2, = self.ax[2].plot(self.Sset, self.deltas,  color="tab:red")
+        self.p3, = self.ax[3].plot(self.Sset, self.gammas,  color="sandybrown")
+        self.p4, = self.ax[4].plot(self.Sset, self.thetas,  color="gray")
+        self.p5, = self.ax[5].plot(self.Sset, self.vegas,   color="forestgreen")
 
-        self.ax[0].set_xlabel("Underlying $S$", fontsize=9)
+        self.ax[0].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
+        self.ax[1].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
+        self.ax[2].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
+        self.ax[3].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
+        self.ax[4].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
+        self.ax[5].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
 
         self.ax[0].grid()    
         self.ax[1].grid()      
+        self.ax[2].grid()    
+        self.ax[3].grid()    
+        self.ax[4].grid()    
+        self.ax[5].grid()    
 
-
-
-        # # Maturity slider (xpos, ypos, width, height)
-        # self.slider_T_ax = plt.axes([0.3, 0.15, 0.50, 0.015])
-        # self.slider_T    = Slider(ax        = self.slider_T_ax, 
-        #                           label     = "Time to Maturity (years)", 
-        #                           valmin    = 0, 
-        #                           valmax    = 5, 
-        #                           valstep   = 0.05, 
-        #                           valinit   = self.T,
-        #                           color     = "gray",
-        #                           initcolor = "gray")
-
-
-        # self.slider_T.on_changed(self.interactiveplot())
-        # self.slider_T.on_changed(self.interactiveplot())
-
-
-
-
-
-
-
+        # Update plot
         self.update()
 
 
-
-
-
-
-
-    # def setupfigure(self):
-    
-    #     # # Setup Figure 
-    #     # self.fig = plt.figure(facecolor = "whitesmoke")
-    #     # #
-    #     # plt.subplots_adjust(left   = 0.075,
-    #     #                     right  = 0.95,
-    #     #                     top    = 0.95,
-    #     #                     bottom = 0.22,
-    #     #                     hspace = 0.65)
-
-    #     # self.ax = self.fig.subplots(3,2)
-    #     # self.ax = self.ax.flatten()
-            
-    #     # self.canvas = FigureCanvasTkAgg(self.fig, self.framer)
-    #     # self.canvas.get_tk_widget().pack(fill = "both", expand = True)
-
-
-    #     # Maturity slider (xpos, ypos, width, height)
-    #     self.slider_T_ax = plt.axes([0.3, 0.15, 0.50, 0.015])
-    #     self.slider_T    = Slider(ax        = self.slider_T_ax, 
-    #                               label     = "Time to Maturity (years)", 
-    #                               valmin    = 0, 
-    #                               valmax    = 5, 
-    #                               valstep   = 0.05, 
-    #                               valinit   = self.T,
-    #                               color     = "gray",
-    #                               initcolor = "gray")
-
-
-    #     self.slider_T.on_changed(self.interactiveplot())
-
-
-
-
-
-
-
-
-
-
-
     def onslide(self, val):
+        '''
+        Recompute option data and update plot when slider values changes
+        '''
 
-
-
-        print("slider moved")
- 
-
-
-        print(self.slider_T.val)
-
-        # Update Option
+        # Update Option given the new values of the sliders
         self.option  = [ BSOption(self.CP, 
                                 s, 
                                 self.K, 
                                 self.slider_T.val, 
-                                self.r, 
-                                self.v, 
+                                self.slider_r.val / 100, 
+                                self.slider_v.val / 100, 
                                 q = self.q) for s in self.Sset ]
 
-
-
+        # Get prices and greeks for all set of underlyings for new values of the sliders
         self.prices  = [o.price()     for o in self.option]
         self.lambdas = [o.Lambda()    for o in self.option]
-        # self.deltas  = [o.delta()     for o in option]
-        # self.gammas  = [o.gamma()*100 for o in option]    
-        # self.thetas  = [o.theta()     for o in option]    
-        # # self.vegas   = [o.vega()      for o in option]
+        self.deltas  = [o.delta()     for o in self.option]
+        self.gammas  = [o.gamma()*100 for o in self.option]    
+        self.thetas  = [o.theta()     for o in self.option]    
+        self.vegas   = [o.vega()      for o in self.option]
   
-  
-        # print(self.prices[40:50])
-        # print(self.ax[0])
-        
-
         self.p0.set_ydata(self.prices)
         self.p1.set_ydata(self.lambdas)
+        self.p2.set_ydata(self.deltas)
+        self.p3.set_ydata(self.gammas)
+        self.p4.set_ydata(self.thetas)
+        self.p5.set_ydata(self.vegas)
 
-        # self.p0, = self.ax[0].plot(self.Sset, self.prices,  color="tab:blue")
-        # self.p1, = self.ax[1].plot(self.Sset, self.lambdas, color="chocolate")
-
-
+        # Update plot
         self.update()
-
-
 
 
     def update(self):
