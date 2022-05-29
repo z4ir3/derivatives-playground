@@ -8,7 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 plt.style.use("seaborn-dark")
 
-from blackscholes import BSOption
+from functions.blackscholes import BSOption
 
 
 class Window:
@@ -130,9 +130,9 @@ class Window:
         self.r      = self.get_r() 
         self.v      = self.get_v()
         self.q      = self.get_q()
-        self.Smin   = self.get_Smin()
-        self.Smax   = self.get_Smax()
-        self.Sset   = self.get_Sset()
+        self.Smin   = self.get_Smin(self.K)
+        self.Smax   = self.get_Smax(self.K)
+        self.Sset   = self.get_Sset(self.Smin, self.Smax)
 
 
         # ---------------
@@ -172,7 +172,7 @@ class Window:
 
 
         # Calling the interactive plot method as soon as a slider is touched
-        self.slider_T.on_changed(self.interactiveplot)
+        self.slider_T.on_changed(self.onslide)
 
 
         # Button calculate option
@@ -189,19 +189,15 @@ class Window:
         '''
         CP = str(self.entry_CP.get()) 
         if CP not in ["C","P"]:
-            messagebox.showerror("Option type error", "Enter either 'C' or 'P'")
+            messagebox.showerror("Option type error", "Enter either 'C' or 'P' in the Call/Put field")
         else:
             return CP
 
 
-    
-    # @staticmethod 
-    # def get_CP(self.entry_CP.get()):
-    #     return str(self.entry_CP.get()) 
-    
-
-    # @staticmethod 
     def get_K(self):
+        '''
+        Get the Call or Put entry
+        '''
         return float(self.entry_K.get()) 
 
     # @staticmethod 
@@ -220,21 +216,30 @@ class Window:
     def get_q(self):
         return float(self.entry_q.get())
 
-    # @staticmethod 
-    def get_Smin(self):
-        return round(self.K * (1 - 0.60), 0)
+    # # @staticmethod 
+    # def get_Smin(self):
+    #     return round(self.K * (1 - 0.60), 0)
 
-    # @staticmethod 
-    def get_Smax(self):
-        return round(self.K * (1 + 0.60), 0)
-        
-    # @staticmethod 
-    def get_Sset(self):
-        return np.linspace(self.Smin, self.Smax, 150)
+    @staticmethod 
+    def get_Smin(K):
+        return round(K * (1 - 0.60), 0)
 
-    # def axslider_T_ax(self):
-    #     return plt.axes([0.3, 0.15, 0.50, 0.015])
-        
+    # # @staticmethod 
+    # def get_Smax(self):
+    #     return round(self.K * (1 + 0.60), 0)
+    @staticmethod 
+    def get_Smax(K):
+        return round(K * (1 + 0.60), 0)
+
+    # # @staticmethod 
+    # def get_Sset(self):
+    #     return np.linspace(self.Smin, self.Smax, 150)
+    @staticmethod 
+    def get_Sset(Smin, Smax):
+        return np.linspace(Smin, Smax, 150)
+
+
+
     def define_slider_T(self):
         '''
         '''
@@ -246,12 +251,6 @@ class Window:
                     valinit   = self.T,
                     color     = "gray",
                     initcolor = "gray")
-
-
-    # def axslider_r_ax(self):
-    #     '''
-    #     '''
-    #     return plt.axes([0.3, 0.05, 0.50, 0.015])
     
     def define_slider_r(self):
         '''
@@ -264,12 +263,6 @@ class Window:
                     valinit   = self.r,   
                     color     = "gray",
                     initcolor = "gray")
-
-
-    # def axslider_v_ax(self):
-    #     '''
-    #     '''
-    #     return plt.axes([0.3, 0.05, 0.50, 0.015])
     
     def define_slider_v(self):
         '''
@@ -288,31 +281,16 @@ class Window:
     def computeoption(self):
         '''
         '''        
-        # # Get inserted data 
-        # self.CP = str(self.entry_CP.get()) 
-        # self.K  = float(self.entry_K.get()) 
-        # self.T  = float(self.entry_T.get())
-        # self.r  = float(self.entry_r.get()) / 100 
-        # self.v  = float(self.entry_v.get()) / 100
-        # self.q  = float(self.entry_q.get())
-
-        # Get inserted data 
+        # Recover inserted data 
         self.CP     = self.get_CP()
         self.K      = self.get_K() 
         self.T      = self.get_T()
-        self.r      = self.get_r() 
+        self.r      = self.get_r()
         self.v      = self.get_v()
         self.q      = self.get_q()
-        self.Smin   = self.get_Smin()
-        self.Smax   = self.get_Smax()
-        self.Sset   = self.get_Sset()
-
-
-
-        # # Create the set of Underlying prices 
-        # self.Smin = round(self.K * (1 - 0.60), 0)
-        # self.Smax = round(self.K * (1 + 0.60), 0)
-        # self.Sset = np.linspace(self.Smin, self.Smax, 150)
+        self.Smin   = self.get_Smin(self.K)
+        self.Smax   = self.get_Smax(self.K)
+        self.Sset   = self.get_Sset(self.Smin, self.Smax)
     
         # Calculate Option  
         self.option = [ BSOption(self.CP, 
@@ -323,15 +301,15 @@ class Window:
                                  self.v, 
                                  q = self.q) for s in self.Sset ]
 
-
-
-
-        self.firstplot()
+        # Plot option price and greeks
+        self.plotoption()
 
 
 
 
-    def firstplot(self):
+    def plotoption(self):
+        '''
+        '''
         # self.setupfigure()
         print("button pushed")
         
@@ -426,7 +404,7 @@ class Window:
 
 
 
-    def interactiveplot(self, val):
+    def onslide(self, val):
 
 
 
