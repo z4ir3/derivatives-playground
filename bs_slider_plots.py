@@ -65,7 +65,7 @@ def interactive_option_plot(IVal):
                          color     = "gray",
                          initcolor = "gray")
     
-    # Maturity slider (xpos, ypos, width, height)
+    # Interest Rate slider (xpos, ypos, width, height)
     slider_r_ax = plt.axes([0.3, 0.10, 0.50, 0.015])
     slider_r    = Slider(ax        = slider_r_ax, 
                          label     = "Risk-free interest rate (%)", 
@@ -76,7 +76,7 @@ def interactive_option_plot(IVal):
                          color     = "gray",
                          initcolor = "gray")
     
-    # Maturity slider (xpos, ypos, width, height)
+    # Volatility slider (xpos, ypos, width, height)
     slider_v_ax = plt.axes([0.3, 0.05, 0.50, 0.015])
     slider_v    = Slider(ax        = slider_v_ax, 
                          label     = "Volatility (%)", 
