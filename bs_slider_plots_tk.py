@@ -6,6 +6,7 @@ from matplotlib.widgets import Slider
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+from sklearn.metrics import v_measure_score
 plt.style.use("seaborn-dark")
 
 from functions.blackscholes import BSOption
@@ -193,47 +194,70 @@ class Window:
         else:
             return CP
 
-
     def get_K(self):
         '''
-        Get the Call or Put entry
+        Get the Strike price entry
         '''
-        return float(self.entry_K.get()) 
+        K = float(self.entry_K.get()) 
+        if K < 1:
+            messagebox.showerror("Strike value error", "Enter at least a strike price equal to 1")
+        else:
+            return K
 
-    # @staticmethod 
     def get_T(self):
-        return float(self.entry_T.get())
-    
-    # @staticmethod 
-    def get_r(self):
-        return float(self.entry_r.get()) / 100 
-    
-    # @staticmethod 
-    def get_v(self):
-        return float(self.entry_v.get()) / 100
-        
-    # @staticmethod 
-    def get_q(self):
-        return float(self.entry_q.get())
+        '''
+        Get the Maturity entry 
+        '''
+        T = float(self.entry_T.get())
+        if T < 0:
+            # If a negative maturity is entered, then return 0 (expiration)
+            return 0 
+        else:
+            return T
 
-    # # @staticmethod 
-    # def get_Smin(self):
-    #     return round(self.K * (1 - 0.60), 0)
+    def get_r(self):
+        '''
+        Get the Interest Rate entry 
+        '''
+        r = float(self.entry_r.get()) / 100 
+        if r < 0.0001:
+            # Returns a mininum of 0.01% (1 basis point)
+            messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01")
+        else:
+            return r
+
+    def get_v(self):
+        '''
+        Get the Volatility entry 
+        '''
+        v = float(self.entry_v.get()) / 100 
+        if v < 0.01:
+            # Returns a mininum of 1%
+            messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1")
+        else:
+            return v
+
+
+    def get_q(self):
+        '''
+        Get the Dividend Yield entry 
+        '''
+        q = float(self.entry_q.get())
+        if q < 0:
+            # If a negative dividend yield is entered, then return 0
+            return 0
+        else:
+            return q
+
 
     @staticmethod 
     def get_Smin(K):
         return round(K * (1 - 0.60), 0)
 
-    # # @staticmethod 
-    # def get_Smax(self):
-    #     return round(self.K * (1 + 0.60), 0)
     @staticmethod 
     def get_Smax(K):
         return round(K * (1 + 0.60), 0)
 
-    # # @staticmethod 
-    # def get_Sset(self):
-    #     return np.linspace(self.Smin, self.Smax, 150)
     @staticmethod 
     def get_Sset(Smin, Smax):
         return np.linspace(Smin, Smax, 150)
