@@ -139,11 +139,21 @@ class Window:
 
         # Setup plot Figure 
         self.fig = plt.figure(facecolor = "whitesmoke")
+        
+        # Subplot spaces
         plt.subplots_adjust(left   = 0.075,
                             right  = 0.95,
                             top    = 0.95,
                             bottom = 0.22,
                             hspace = 0.65)
+
+        # Plot title
+        plt.suptitle("Black-Scholes Option playground: {} Option".format("Call" if self.CP == "C" else "Put"),
+                    fontsize   = 15, 
+                    fontweight = "bold",
+                    color      = "k")
+
+        # plt.tick_params(axis='both', which='major', labelsize=10)
 
         self.ax = self.fig.subplots(3,2)
         self.ax = self.ax.flatten()
@@ -153,8 +163,8 @@ class Window:
 
 
         # Define sliders
-        self.slider_T_ax = plt.axes([0.3, 0.12, 0.50, 0.015])
-        self.slider_r_ax = plt.axes([0.3, 0.07, 0.50, 0.015])
+        self.slider_T_ax = plt.axes([0.3, 0.08, 0.50, 0.015])
+        self.slider_r_ax = plt.axes([0.3, 0.05, 0.50, 0.015])
         self.slider_v_ax = plt.axes([0.3, 0.02, 0.50, 0.015])
 
         self.slider_T = self.define_slider(self.slider_T_ax,
@@ -198,7 +208,7 @@ class Window:
         Get the Call or Put entry
         '''
         CP = str(self.entry_CP.get()) 
-        if CP not in ["C","P"]:
+        if CP not in ["C", "P"]:
             messagebox.showerror("Option type error", "Enter either 'C' or 'P' in the Call/Put field")
         else:
             return CP
@@ -208,12 +218,17 @@ class Window:
         '''
         Get the Strike price entry
         '''
-        K = float(self.entry_K.get()) 
-        if K < 1:
-            messagebox.showerror("Strike value error", "Enter at least a strike price equal to 1")
-        else:
-            return K
+        try:
+            K = float(self.entry_K.get()) 
 
+            if K < 1:
+                messagebox.showerror("Strike value error", "Enter at least a strike price equal to 1")
+            else:
+                return K
+                
+        except:
+            messagebox.showerror("Strike value error", "Enter a number")
+    
 
     def get_T(self):
         '''
@@ -292,48 +307,6 @@ class Window:
                     initcolor = "gray")
 
 
-
-    # def define_slider_T(self):
-    #     '''
-    #     Define slider for maturitiey values 
-    #     '''
-    #     return Slider(ax = self.slider_T_ax, 
-    #                 label     = "Time to Maturity (years)", 
-    #                 valmin    = 0, 
-    #                 valmax    = 5, 
-    #                 valstep   = 0.05, 
-    #                 valinit   = self.T,
-    #                 color     = "gray",
-    #                 initcolor = "gray")
-
-    # def define_slider_r(self):
-    #     '''
-    #     Define slider for interest rate values 
-    #     '''
-    #     return Slider(ax      = self.slider_r_ax, 
-    #                 label     = "Risk-free interest rate (%)", 
-    #                 valmin    = 1,  
-    #                 valmax    = 7, 
-    #                 valstep   = 0.1, 
-    #                 valinit   = self.r * 100,   
-    #                 color     = "gray",
-    #                 initcolor = "gray")
-
-
-    # def define_slider_v(self):
-    #     '''
-    #     Define slider for volatility values 
-    #     '''
-    #     return Slider(ax      = self.slider_v_ax, 
-    #                 label     = "Volatility (%)", 
-    #                 valmin    = 1,  
-    #                 valmax    = 100, 
-    #                 valstep   = 1, 
-    #                 valinit   = self.v * 100,   
-    #                 color     = "gray",
-    #                 initcolor = "gray")
-
-
     def computeoption(self):
         '''
         Calculate option price and greeks given the input data
@@ -366,7 +339,6 @@ class Window:
         '''
         Plot 
         '''
-        
         # Clear current axis 
         for axn in range(len(self.ax)):
             self.ax[axn].clear()
@@ -379,6 +351,7 @@ class Window:
         self.thetas  = [o.theta()     for o in self.option] 
         self.vegas   = [o.vega()      for o in self.option]  
         
+        # Plot
         self.p0, = self.ax[0].plot(self.Sset, self.prices,  color="tab:blue")
         self.p1, = self.ax[1].plot(self.Sset, self.lambdas, color="chocolate")
         self.p2, = self.ax[2].plot(self.Sset, self.deltas,  color="tab:red")
@@ -386,6 +359,7 @@ class Window:
         self.p4, = self.ax[4].plot(self.Sset, self.thetas,  color="gray")
         self.p5, = self.ax[5].plot(self.Sset, self.vegas,   color="forestgreen")
 
+        # Set x-labels
         self.ax[0].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
         self.ax[1].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
         self.ax[2].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
@@ -393,13 +367,25 @@ class Window:
         self.ax[4].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
         self.ax[5].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
 
+        # Set grids
         self.ax[0].grid()    
         self.ax[1].grid()      
         self.ax[2].grid()    
         self.ax[3].grid()    
         self.ax[4].grid()    
-        self.ax[5].grid()    
+        self.ax[5].grid()   
 
+        # Set titles 
+        self.ax[0].set_title("Price",  fontsize=11, fontweight="bold")
+        self.ax[1].set_title("Lambda", fontsize=11, fontweight="bold")
+        self.ax[2].set_title("Delta",  fontsize=11, fontweight="bold")
+        self.ax[3].set_title("Gamma",  fontsize=11, fontweight="bold")
+        self.ax[4].set_title("Theta",  fontsize=11, fontweight="bold")
+        self.ax[5].set_title("Vega",   fontsize=11, fontweight="bold") 
+
+        # self.ax[0].set_xticklabels(self.Sset, fontsize=10)
+        plt.setp(self.ax[0].get_xticklabels(), fontsize=16)
+        
         # Update plot
         self.update()
 
@@ -408,14 +394,18 @@ class Window:
         '''
         Recompute option data and update plot when slider values changes
         '''
+        # Get current sliders' values
+        current_T = self.slider_T.val
+        current_r = self.slider_r.val
+        current_v = self.slider_v.val
 
         # Update Option given the new values of the sliders
         self.option  = [ BSOption(self.CP, 
                                 s, 
                                 self.K, 
-                                self.slider_T.val, 
-                                self.slider_r.val / 100, 
-                                self.slider_v.val / 100, 
+                                current_T,
+                                current_r / 100, 
+                                current_v / 100, 
                                 q = self.q) for s in self.Sset ]
 
         # Get prices and greeks for all set of underlyings for new values of the sliders
@@ -432,6 +422,52 @@ class Window:
         self.p3.set_ydata(self.gammas)
         self.p4.set_ydata(self.thetas)
         self.p5.set_ydata(self.vegas)
+
+        # Set new axis 
+
+        # Price
+        self.ax[0].set_ylim([min(self.prices) - 0.1*max(self.prices), max(self.prices) + 0.1*max(self.prices)])
+        
+        # Lambda
+        if self.CP == "C":
+            if current_T != 0:
+                M = self.lambdas[ min(np.where(np.array(self.lambdas) < +np.inf)[0]) ]
+                self.ax[1].set_ylim([min(self.lambdas) - 0.1*min(self.lambdas), M + 0.1*M])
+            else:
+                self.ax[1].set_ylim(bottom = -1)
+        else:
+            if current_T != 0:
+                m = self.lambdas[ max(np.where(np.array(self.lambdas) > - np.inf)[0] ) ]                
+                self.ax[1].set_ylim([m + 0.1*m, max(self.lambdas) - 0.1*max(self.lambdas)])
+            else:
+                self.ax[1].set_ylim(top = +1)
+
+        # Delta
+        if self.CP == "C":
+            self.ax[2].set_ylim([min(self.deltas) - 0.1*max(self.deltas), max(self.deltas) + 0.1*max(self.deltas)])
+        else:
+            self.ax[2].set_ylim([min(self.deltas) + 0.1*min(self.deltas), max(self.deltas) - 0.1*min(self.deltas)])            
+        
+        # Gamma
+        if current_T != 0:
+            self.ax[3].set_ylim([min(self.gammas) - 0.1*max(self.gammas), max(self.gammas) + 0.1*max(self.gammas)])         
+
+        # Theta
+        if current_T != 0:
+            self.ax[4].set_ylim(bottom = min(self.thetas) + 0.5*min(self.thetas) if min(self.thetas) < 0 else min(self.thetas) - 0.5*min(self.thetas))
+            self.ax[4].set_ylim(top    = max(self.thetas) - 1*max(self.thetas)   if max(self.thetas) < 0 else max(self.thetas) + 1*max(self.thetas))
+
+        else:
+            self.ax[4].set_ylim([-5,1])
+
+        # Vega            
+        if current_T != 0:
+            self.ax[5].set_ylim([min(self.vegas)  - 0.1*max(self.vegas),  max(self.vegas)  + 0.1*max(self.vegas)])
+
+
+
+
+
 
         # Update plot
         self.update()
