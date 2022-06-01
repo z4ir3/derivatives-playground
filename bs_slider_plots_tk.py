@@ -220,62 +220,72 @@ class Window:
         '''
         try:
             K = float(self.entry_K.get()) 
-
             if K < 1:
                 messagebox.showerror("Strike value error", "Enter at least a strike price equal to 1")
             else:
                 return K
-                
         except:
-            messagebox.showerror("Strike value error", "Enter a number")
+            messagebox.showerror("Strike value error", "Enter a valid strike price")
     
 
     def get_T(self):
         '''
         Get the Maturity entry 
         '''
-        T = float(self.entry_T.get())
-        if T < 0:
-            # If a negative maturity is entered, then return 0 (expiration)
-            return 0 
-        else:
-            return T
-
+        try:
+            T = float(self.entry_T.get())
+            if T < 0:
+                # If a negative maturity is entered, then return 0 (expiration)
+                return 0 
+            else:
+                return T
+        except:
+            messagebox.showerror("Maturity value error", "Enter a valid maturity value")
+    
 
     def get_r(self):
         '''
         Get the Interest Rate entry 
         '''
-        r = float(self.entry_r.get())
-        if r < 0.01:
-            # Returns a mininum of 0.01% (1 basis point)
-            messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01")
-        else:
-            return r / 100
+        try:
+            r = float(self.entry_r.get())
+            if r < 0.01:
+                # Returns a mininum of 0.01% (1 basis point)
+                messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01")
+            else:
+                return r / 100
+        except:
+            messagebox.showerror("Interest Rate value error", "Enter a valid interest rate value")
 
 
     def get_v(self):
         '''
         Get the Volatility entry 
         '''
-        v = float(self.entry_v.get()) 
-        if v < 1:
-            # Returns a mininum of 1%
-            messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1")
-        else:
-            return v / 100
+        try:
+            v = float(self.entry_v.get()) 
+            if v < 1:
+                # Returns a mininum of 1%
+                messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1")
+            else:
+                return v / 100
+        except:
+            messagebox.showerror("Volatility value error", "Enter a valid volatility value")
 
 
     def get_q(self):
         '''
         Get the Dividend Yield entry 
         '''
-        q = float(self.entry_q.get())
-        if q < 0:
-            # If a negative dividend yield is entered, then return 0
-            return 0
-        else:
-            return q
+        try: 
+            q = float(self.entry_q.get())
+            if q < 0:
+                # If a negative dividend yield is entered, then return 0
+                return 0
+            else:
+                return q
+        except:
+            messagebox.showerror("Dividend Yield value error", "Enter a valid dividend yield value")
 
 
     @staticmethod 
