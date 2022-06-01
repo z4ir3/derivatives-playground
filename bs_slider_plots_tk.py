@@ -139,7 +139,6 @@ class Window:
 
         # Setup plot Figure 
         self.fig = plt.figure(facecolor = "whitesmoke")
-        #
         plt.subplots_adjust(left   = 0.075,
                             right  = 0.95,
                             top    = 0.95,
@@ -158,9 +157,27 @@ class Window:
         self.slider_r_ax = plt.axes([0.3, 0.07, 0.50, 0.015])
         self.slider_v_ax = plt.axes([0.3, 0.02, 0.50, 0.015])
 
-        self.slider_T = self.define_slider_T()
-        self.slider_r = self.define_slider_r()
-        self.slider_v = self.define_slider_v()
+        self.slider_T = self.define_slider(self.slider_T_ax,
+                                            labl = "Time to Maturity (years)", 
+                                            vmin = 0, 
+                                            vmax = 5, 
+                                            vstp = 0.05, 
+                                            vini = self.T)
+
+        self.slider_r = self.define_slider(self.slider_r_ax,
+                                            labl = "Risk-free interest rate (%)", 
+                                            vmin = 1, 
+                                            vmax = 7, 
+                                            vstp = 0.1, 
+                                            vini = self.r * 100)
+
+        self.slider_v = self.define_slider(self.slider_v_ax,
+                                            labl = "Volatility (%)", 
+                                            vmin = 1, 
+                                            vmax = 100, 
+                                            vstp = 1, 
+                                            vini = self.v * 100)
+
 
         # Calling the interactive plot method as soon as a slider is touched
         self.slider_T.on_changed(self.onslide)
@@ -261,46 +278,60 @@ class Window:
         return np.linspace(Smin, Smax, 150)
 
 
-    def define_slider_T(self):
+    def define_slider(self, sliderax, labl="Slider", vmin=0, vmax=1, vstp=0.1, vini=0.5):
         '''
         Define slider for maturitiey values 
         '''
-        return Slider(ax = self.slider_T_ax, 
-                    label     = "Time to Maturity (years)", 
-                    valmin    = 0, 
-                    valmax    = 5, 
-                    valstep   = 0.05, 
-                    valinit   = self.T,
+        return Slider(ax = sliderax, 
+                    label     = labl, 
+                    valmin    = vmin, 
+                    valmax    = vmax, 
+                    valstep   = vstp, 
+                    valinit   = vini,
                     color     = "gray",
                     initcolor = "gray")
 
 
-    def define_slider_r(self):
-        '''
-        Define slider for interest rate values 
-        '''
-        return Slider(ax      = self.slider_r_ax, 
-                    label     = "Risk-free interest rate (%)", 
-                    valmin    = 1,  
-                    valmax    = 7, 
-                    valstep   = 0.1, 
-                    valinit   = self.r * 100,   
-                    color     = "gray",
-                    initcolor = "gray")
+
+    # def define_slider_T(self):
+    #     '''
+    #     Define slider for maturitiey values 
+    #     '''
+    #     return Slider(ax = self.slider_T_ax, 
+    #                 label     = "Time to Maturity (years)", 
+    #                 valmin    = 0, 
+    #                 valmax    = 5, 
+    #                 valstep   = 0.05, 
+    #                 valinit   = self.T,
+    #                 color     = "gray",
+    #                 initcolor = "gray")
+
+    # def define_slider_r(self):
+    #     '''
+    #     Define slider for interest rate values 
+    #     '''
+    #     return Slider(ax      = self.slider_r_ax, 
+    #                 label     = "Risk-free interest rate (%)", 
+    #                 valmin    = 1,  
+    #                 valmax    = 7, 
+    #                 valstep   = 0.1, 
+    #                 valinit   = self.r * 100,   
+    #                 color     = "gray",
+    #                 initcolor = "gray")
 
 
-    def define_slider_v(self):
-        '''
-        Define slider for volatility values 
-        '''
-        return Slider(ax      = self.slider_v_ax, 
-                    label     = "Volatility (%)", 
-                    valmin    = 1,  
-                    valmax    = 100, 
-                    valstep   = 1, 
-                    valinit   = self.v * 100,   
-                    color     = "gray",
-                    initcolor = "gray")
+    # def define_slider_v(self):
+    #     '''
+    #     Define slider for volatility values 
+    #     '''
+    #     return Slider(ax      = self.slider_v_ax, 
+    #                 label     = "Volatility (%)", 
+    #                 valmin    = 1,  
+    #                 valmax    = 100, 
+    #                 valstep   = 1, 
+    #                 valinit   = self.v * 100,   
+    #                 color     = "gray",
+    #                 initcolor = "gray")
 
 
     def computeoption(self):
@@ -416,9 +447,6 @@ class Window:
 
 
 
-
-
-
 if __name__ == "__main__":
     '''
     '''
@@ -426,11 +454,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     
     gui = Window(root)
-
-
-
-    # gui.slider_T.on_changed(gui.interactiveplot())
-
     
     gui.root.mainloop()
     
