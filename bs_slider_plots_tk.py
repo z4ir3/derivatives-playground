@@ -23,13 +23,13 @@ class Window:
         '''
         self.root = root  
         self.root.title("Black-Scholes playground") 
-        self.root.geometry("1250x850")
+        self.root.geometry("1350x850")
 
         # ---------------
         # Left frame
         # ---------------
         self.framel = tk.Frame(master = self.root, relief = tk.RAISED, bg="#E4E4E0", borderwidth = 1)
-        self.framel.place(relx = 0.02, rely = 0.02, relwidth = 0.3, relheight = 0.95)
+        self.framel.place(relx = 0.02, rely = 0.02, relwidth = 0.23, relheight = 0.95)
     
     
         # Call or Put
@@ -134,18 +134,19 @@ class Window:
 
         # Right main box containing the interactive plot
         self.framer = tk.Frame(master = self.root, bg="#80c1ff")
-        self.framer.place(relx=0.35, rely=0.02, relwidth=0.60, relheight=0.95)
+        self.framer.place(relx=0.27, rely=0.02, relwidth=0.70, relheight=0.95)
 
 
         # Setup plot Figure 
         self.fig = plt.figure(facecolor = "whitesmoke")
         
         # Subplot spaces
-        plt.subplots_adjust(left   = 0.075,
+        plt.subplots_adjust(left   = 0.070,
                             right  = 0.95,
-                            top    = 0.95,
-                            bottom = 0.22,
-                            hspace = 0.65)
+                            top    = 0.93,
+                            bottom = 0.17,
+                            hspace = 0.5,
+                            wspace = 0.15)
 
         # Plot title
         plt.suptitle("Black-Scholes Option playground: {} Option".format("Call" if self.CP == "C" else "Put"),
@@ -153,10 +154,8 @@ class Window:
                     fontweight = "bold",
                     color      = "k")
 
-        # plt.tick_params(axis='both', which='major', labelsize=10)
-
-        self.ax = self.fig.subplots(3,2)
-        self.ax = self.ax.flatten()
+        # self.ax = self.fig.subplots(3,2)
+        # self.ax = self.ax.flatten()
             
         self.canvas = FigureCanvasTkAgg(self.fig, self.framer)
         self.canvas.get_tk_widget().pack(fill = "both", expand = True)
@@ -349,9 +348,16 @@ class Window:
         '''
         Plot 
         '''
+
         # Clear current axis 
-        for axn in range(len(self.ax)):
-            self.ax[axn].clear()
+        try:
+            for axn in range(len(self.ax)):
+                self.ax[axn].clear()
+
+        except:
+            self.ax = self.fig.subplots(3,2)
+            self.ax = self.ax.flatten()
+
 
         # Get prices and greeks for all set of underlyings
         self.prices  = [o.price()     for o in self.option]
@@ -370,12 +376,23 @@ class Window:
         self.p5, = self.ax[5].plot(self.Sset, self.vegas,   color="forestgreen")
 
         # Set x-labels
-        self.ax[0].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
-        self.ax[1].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
-        self.ax[2].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
-        self.ax[3].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
-        self.ax[4].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
-        self.ax[5].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=9)
+        xfontsize = 8
+        self.ax[0].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
+        self.ax[1].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
+        self.ax[2].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
+        self.ax[3].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
+        self.ax[4].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
+        self.ax[5].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
+
+        # Set y-labels    
+        yfontsize = 8
+        ycol = "k"
+        self.ax[0].set_ylabel("Price (USD)", fontsize=yfontsize, color=ycol)
+        self.ax[1].set_ylabel("Lambda", fontsize=yfontsize, color=ycol)
+        self.ax[2].set_ylabel("Delta (%)", fontsize=yfontsize, color=ycol)
+        self.ax[3].set_ylabel("Gamma (%)", fontsize=yfontsize, color=ycol)
+        self.ax[4].set_ylabel("Theta", fontsize=yfontsize, color=ycol)
+        self.ax[5].set_ylabel("Vega", fontsize=yfontsize, color=ycol)
 
         # Set grids
         self.ax[0].grid()    
@@ -386,16 +403,33 @@ class Window:
         self.ax[5].grid()   
 
         # Set titles 
-        self.ax[0].set_title("Price",  fontsize=11, fontweight="bold")
-        self.ax[1].set_title("Lambda", fontsize=11, fontweight="bold")
-        self.ax[2].set_title("Delta",  fontsize=11, fontweight="bold")
-        self.ax[3].set_title("Gamma",  fontsize=11, fontweight="bold")
-        self.ax[4].set_title("Theta",  fontsize=11, fontweight="bold")
-        self.ax[5].set_title("Vega",   fontsize=11, fontweight="bold") 
+        # self.ax[0].set_title("Price",  fontsize=11, fontweight="bold")
+        # self.ax[1].set_title("Lambda", fontsize=11, fontweight="bold")
+        # self.ax[2].set_title("Delta",  fontsize=11, fontweight="bold")
+        # self.ax[3].set_title("Gamma",  fontsize=11, fontweight="bold")
+        # self.ax[4].set_title("Theta",  fontsize=11, fontweight="bold")
+        # self.ax[5].set_title("Vega",   fontsize=11, fontweight="bold") 
 
         # self.ax[0].set_xticklabels(self.Sset, fontsize=10)
-        plt.setp(self.ax[0].get_xticklabels(), fontsize=16)
-        
+        xyfontsize = 8 
+        plt.setp(self.ax[0].get_xticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[0].get_yticklabels(), fontsize=xyfontsize)
+
+        plt.setp(self.ax[1].get_xticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[1].get_yticklabels(), fontsize=xyfontsize)
+
+        plt.setp(self.ax[2].get_xticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[2].get_yticklabels(), fontsize=xyfontsize)
+
+        plt.setp(self.ax[3].get_xticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[3].get_yticklabels(), fontsize=xyfontsize)
+
+        plt.setp(self.ax[4].get_xticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[4].get_yticklabels(), fontsize=xyfontsize)
+
+        plt.setp(self.ax[5].get_xticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[5].get_yticklabels(), fontsize=xyfontsize)
+
         # Update plot
         self.update()
 
