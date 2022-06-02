@@ -124,7 +124,7 @@ class Window:
         self.button = tk.Button(master = self.framel, text="Calculate", command = self.computeoption)
         self.button.rowconfigure(6, weight=1, minsize=6)
         self.button.columnconfigure(0, weight=1, minsize=6)
-        self.button.grid(columnspan=2) #row=6, column=1) #, padx=20, pady=10, sticky="nsew")
+        self.button.grid(columnspan=6) #row=6, column=1) #, padx=20, pady=10, sticky="nsew")
 
 
         # Get inserted data 
@@ -142,42 +142,44 @@ class Window:
 
 
 
-
+        #
+        relief = "flat" 
 
 
         self.message1 = ''''''
-
         self.text_box1 = tk.Label(master = self.framel, 
                         text = self.message1,
                         bg = self.framelcolbg, 
-                        relief = "solid")
-        self.text_box1.grid(columnspan=2, padx=20, pady=20, sticky="nsew") 
+                        relief = relief)
+        self.text_box1.grid(columnspan=5, padx=40, pady=20, sticky="nsew") 
         self.text_box1.configure(font = ("Helvetica Neue", 12, "normal") )
 
 
 
 
-        # self.text_box = tk.Text(master = self.framel, 
-        #                     height = 4, 
-        #                     width  = 35, 
-        #                     relief = "flat", 
-        #                     bg="#E4E4E0", 
-        #                     borderwidth = 0)
-        # self.text_box.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
-        # self.text_box.insert('end', self.message)
-        # self.text_box.config(state='disabled')
-        # self.text_box.configure(font = ("Helvetica Neue", 11, "normal") )
-
+        self.img0 = ""
+        self.pic0 = tk.Label(master=self.framel, 
+                    image = self.img0, 
+                    bg = self.framelcolbg, 
+                    relief = relief,
+                    width = 10)
+        self.pic0.grid(columnspan=5, padx=20, pady=3, sticky="nsew")
+        
         self.img1 = ""
-        # img1 = img1.resize((240,19), Image.ANTIALIAS)
-        # self.img1 = ImageTk.PhotoImage(img1)
         self.pic1 = tk.Label(master=self.framel, 
                     image = self.img1, 
                     bg = self.framelcolbg, 
-                    relief = "solid",
+                    relief = relief,
                     width = 10)
-        self.pic1.grid(columnspan=5, padx=8, pady=3, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+        self.pic1.grid(columnspan=5, padx=20, pady=3, sticky="nsew")
         
+        self.img2 = ""
+        self.pic2 = tk.Label(master=self.framel, 
+                    image = self.img2, 
+                    bg = self.framelcolbg, 
+                    relief = relief,
+                    width = 10)
+        self.pic2.grid(columnspan=5, padx=20, pady=3, sticky="nsew")
         
 
 
@@ -407,21 +409,38 @@ class Window:
         '''
         '''
 
+        # Update Call or Put price according to entry data
         auxoption = "Call" if self.CP == "C" else "Put"
         self.message1 = '''
 The Black-Scholes ''' + auxoption + ''' price is given by:
         '''
-
         self.text_box1.configure(text=self.message1)
 
+        # Updating formula for the Call or the Put
         if auxoption == "Call":
-            img1 = (Image.open("data/callprice.png")) 
+            img0 = (Image.open("data/callprice.png")) 
         else:
-            img1 = (Image.open("data/putprice.png")) 
-        img1 = img1.resize((240,19), Image.ANTIALIAS)
-        self.img1 = ImageTk.PhotoImage(img1)
+            img0 = (Image.open("data/putprice.png")) 
+        img0 = img0.resize((240,19), Image.ANTIALIAS)
+        self.img0 = ImageTk.PhotoImage(img0)
+        self.pic0.configure(image=self.img0)
 
+
+        # Updating formula for d1
+        img1 = (Image.open("data/d1.png")) 
+        img1 = img1.resize((250,48), Image.ANTIALIAS)
+        self.img1 = ImageTk.PhotoImage(img1)
         self.pic1.configure(image=self.img1)
+
+
+        # Updating formula for d2
+        img2 = (Image.open("data/d2.png")) 
+        img2 = img2.resize((115,20), Image.ANTIALIAS)
+        self.img2 = ImageTk.PhotoImage(img2)
+        self.pic2.configure(image=self.img2)
+
+
+
 
 
 
