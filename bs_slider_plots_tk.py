@@ -15,6 +15,8 @@ plt.style.use("seaborn-dark")
 from functions.blackscholes import BSOption
 
 
+from PIL import ImageTk, Image
+
 class Window:
     '''
     '''
@@ -116,6 +118,13 @@ class Window:
         self.entry_q.insert(0, 0)
 
 
+        # Button calculate option
+        self.button = tk.Button(master = self.framel, text="Calculate", command = self.computeoption)
+        self.button.rowconfigure(6, weight=1, minsize=6)
+        self.button.columnconfigure(0, weight=1, minsize=6)
+        self.button.grid(columnspan=2) #row=6, column=1) #, padx=20, pady=10, sticky="nsew")
+
+
         # Get inserted data 
         self.CP     = self.get_CP()
         self.K      = self.get_K() 
@@ -126,6 +135,97 @@ class Window:
         self.Smin   = self.get_Smin(self.K)
         self.Smax   = self.get_Smax(self.K)
         self.Sset   = self.get_Sset(self.Smin, self.Smax)
+
+
+
+
+
+
+
+
+        auxoption = "Call" if self.CP == "C" else "Put"
+        self.message = '''
+The Black-Scholes ''' + auxoption + ''' price is given by:
+        '''
+        self.text_box = tk.Text(master = self.framel, 
+                            height = 4, 
+                            width  = 35, 
+                            relief = "flat", 
+                            bg="#E4E4E0", 
+                            borderwidth = 0)
+        self.text_box.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+        self.text_box.insert('end', self.message)
+        self.text_box.config(state='disabled')
+        self.text_box.configure(font = ("Helvetica Neue", 11, "normal") )
+
+
+        img = (Image.open("data/callprice.png")) #tk.PhotoImage(file="data/callprice.png")
+        img = img.resize((250,18), Image.ANTIALIAS)
+        # self.optionpricepic = tk.PhotoImage(file="data/callprice.png")
+        self.img = ImageTk.PhotoImage(img)
+
+        self.labelimg = tk.Label(master=self.framel, 
+                    image = self.img, 
+                    bg="#E4E4E0", 
+                    relief = "flat",
+                    width = 5)
+        self.labelimg.grid(columnspan=4, padx=5, pady=3, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+        
+        
+        # # from tkinter import *
+        # from tkPDFViewer import tkPDFViewer as pdf
+        # self.v1 = pdf.ShowPdf()
+  
+        # # Adding pdf location and width and height.
+        # self.v2 = self.v1.pdf_view(self.framel,
+        #                 pdf_location = r"location", 
+        #                 width = 50, height = 100)
+
+        # self.v2.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+
+
+
+
+
+
+
+
+
+
+        ##### to see supported font 
+        # from tkinter import font
+        # print(font.families())
+
+
+
+
+
+
+
+
+
+
+        self.text_box_2 = tk.Label(master = self.framel, 
+                        text = self.message,
+                        bg="#E4E4E0", 
+                        relief = "solid")
+        self.text_box_2.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+        self.text_box_2.configure(font = ("Helvetica Neue", 12, "normal") )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         # ---------------
@@ -194,12 +294,7 @@ class Window:
         self.slider_v.on_changed(self.onslide)
 
 
-        # Button calculate option
-        self.button = tk.Button(master = self.framel, text="Calculate", command = self.computeoption)
-        self.button.rowconfigure(6, weight=1, minsize=6)
-        self.button.columnconfigure(0, weight=1, minsize=6)
-        self.button.grid(row=6, column=1) #, padx=20, pady=10, sticky="nsew")
-
+ 
 
 
     def get_CP(self):
