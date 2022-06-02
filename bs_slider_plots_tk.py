@@ -26,11 +26,13 @@ class Window:
         self.root = root  
         self.root.title("Black-Scholes playground") 
         self.root.geometry("1350x850")
+        self.framelcolbg = "#E4E4E0"
+
 
         # ---------------
         # Left frame
         # ---------------
-        self.framel = tk.Frame(master = self.root, relief = tk.RAISED, bg="#E4E4E0", borderwidth = 1)
+        self.framel = tk.Frame(master = self.root, relief = tk.RAISED, bg=self.framelcolbg, borderwidth = 1)
         self.framel.place(relx = 0.02, rely = 0.02, relwidth = 0.23, relheight = 0.95)
     
     
@@ -143,47 +145,43 @@ class Window:
 
 
 
-        auxoption = "Call" if self.CP == "C" else "Put"
-        self.message = '''
-The Black-Scholes ''' + auxoption + ''' price is given by:
-        '''
-        self.text_box = tk.Text(master = self.framel, 
-                            height = 4, 
-                            width  = 35, 
-                            relief = "flat", 
-                            bg="#E4E4E0", 
-                            borderwidth = 0)
-        self.text_box.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
-        self.text_box.insert('end', self.message)
-        self.text_box.config(state='disabled')
-        self.text_box.configure(font = ("Helvetica Neue", 11, "normal") )
+        self.message1 = ''''''
+
+        self.text_box1 = tk.Label(master = self.framel, 
+                        text = self.message1,
+                        bg = self.framelcolbg, 
+                        relief = "solid")
+        self.text_box1.grid(columnspan=2, padx=20, pady=20, sticky="nsew") 
+        self.text_box1.configure(font = ("Helvetica Neue", 12, "normal") )
 
 
-        img = (Image.open("data/callprice.png")) #tk.PhotoImage(file="data/callprice.png")
-        img = img.resize((250,18), Image.ANTIALIAS)
-        # self.optionpricepic = tk.PhotoImage(file="data/callprice.png")
-        self.img = ImageTk.PhotoImage(img)
 
-        self.labelimg = tk.Label(master=self.framel, 
-                    image = self.img, 
-                    bg="#E4E4E0", 
-                    relief = "flat",
-                    width = 5)
-        self.labelimg.grid(columnspan=4, padx=5, pady=3, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+
+        # self.text_box = tk.Text(master = self.framel, 
+        #                     height = 4, 
+        #                     width  = 35, 
+        #                     relief = "flat", 
+        #                     bg="#E4E4E0", 
+        #                     borderwidth = 0)
+        # self.text_box.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
+        # self.text_box.insert('end', self.message)
+        # self.text_box.config(state='disabled')
+        # self.text_box.configure(font = ("Helvetica Neue", 11, "normal") )
+
+        self.img1 = ""
+        # img1 = img1.resize((240,19), Image.ANTIALIAS)
+        # self.img1 = ImageTk.PhotoImage(img1)
+        self.pic1 = tk.Label(master=self.framel, 
+                    image = self.img1, 
+                    bg = self.framelcolbg, 
+                    relief = "solid",
+                    width = 10)
+        self.pic1.grid(columnspan=5, padx=8, pady=3, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
         
         
-        # # from tkinter import *
-        # from tkPDFViewer import tkPDFViewer as pdf
-        # self.v1 = pdf.ShowPdf()
-  
-        # # Adding pdf location and width and height.
-        # self.v2 = self.v1.pdf_view(self.framel,
-        #                 pdf_location = r"location", 
-        #                 width = 50, height = 100)
-
-        # self.v2.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
 
 
+       
 
 
 
@@ -204,13 +202,6 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
 
 
 
-
-        self.text_box_2 = tk.Label(master = self.framel, 
-                        text = self.message,
-                        bg="#E4E4E0", 
-                        relief = "solid")
-        self.text_box_2.grid(columnspan=2, padx=20, pady=20, sticky="nsew") #row=7, column=0, padx=20, pady=10, sticky="nsew")
-        self.text_box_2.configure(font = ("Helvetica Neue", 12, "normal") )
 
 
 
@@ -295,6 +286,7 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
 
 
  
+
 
 
     def get_CP(self):
@@ -411,20 +403,46 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
                     initcolor = "gray")
 
 
+    def updatedescription(self):
+        '''
+        '''
+
+        auxoption = "Call" if self.CP == "C" else "Put"
+        self.message1 = '''
+The Black-Scholes ''' + auxoption + ''' price is given by:
+        '''
+
+        self.text_box1.configure(text=self.message1)
+
+        if auxoption == "Call":
+            img1 = (Image.open("data/callprice.png")) 
+        else:
+            img1 = (Image.open("data/putprice.png")) 
+        img1 = img1.resize((240,19), Image.ANTIALIAS)
+        self.img1 = ImageTk.PhotoImage(img1)
+
+        self.pic1.configure(image=self.img1)
+
+
+
+
+
+
+
     def computeoption(self):
         '''
         Calculate option price and greeks given the input data
         '''        
         # Recover inserted data 
-        self.CP     = self.get_CP()
-        self.K      = self.get_K() 
-        self.T      = self.get_T()
-        self.r      = self.get_r()
-        self.v      = self.get_v()
-        self.q      = self.get_q()
-        self.Smin   = self.get_Smin(self.K)
-        self.Smax   = self.get_Smax(self.K)
-        self.Sset   = self.get_Sset(self.Smin, self.Smax)
+        self.CP   = self.get_CP()
+        self.K    = self.get_K() 
+        self.T    = self.get_T()
+        self.r    = self.get_r()
+        self.v    = self.get_v()
+        self.q    = self.get_q()
+        self.Smin = self.get_Smin(self.K)
+        self.Smax = self.get_Smax(self.K)
+        self.Sset = self.get_Sset(self.Smin, self.Smax)
     
         # Calculate Option  
         self.option = [ BSOption(self.CP, 
@@ -434,6 +452,18 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
                                  self.r, 
                                  self.v, 
                                  q = self.q) for s in self.Sset ]
+
+
+
+
+        # Update description
+        self.updatedescription()
+
+
+
+
+
+
 
         # Plot option price and greeks
         self.plotoption()
