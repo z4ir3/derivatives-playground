@@ -611,8 +611,69 @@ where
         plt.setp(self.ax[5].get_xticklabels(), fontsize=xyfontsize)
         plt.setp(self.ax[5].get_yticklabels(), fontsize=xyfontsize)
 
+
+        # # Plot the ATM price or greek (put in legend)
+        # atm = np.where(self.Sset >= self.K)[0][0]
+        # self.ax[0].scatter(self.Sset[atm], self.prices[atm], c="k", s=10, marker="o", label="ATM Price ({:.1f})".format(round(self.prices[atm],2)))
+        # self.ax[1].scatter(self.Sset[atm], self.lambdas[atm], c="k", s=10, marker="o", label="ATM Lambda ({:.1f})".format(round(self.lambdas[atm],2)))
+        # self.ax[2].scatter(self.Sset[atm], self.deltas[atm], c="k", s=10, marker="o", label="ATM Delta ({:.2f})".format(round(self.deltas[atm],2)))
+        # self.ax[3].scatter(self.Sset[atm], self.gammas[atm], c="k", s=10, marker="o", label="ATM Gamma ({:.1f})".format(round(self.gammas[atm],2)))
+        # self.ax[4].scatter(self.Sset[atm], self.thetas[atm], c="k", s=10, marker="o", label="ATM Theta ({:.1f})".format(round(self.thetas[atm],2)))
+        # self.ax[5].scatter(self.Sset[atm], self.vegas[atm], c="k", s=10, marker="o", label="ATM Vega ({:.1f})".format(round(self.vegas[atm],2)))
+
+        # # Set legend 
+        # self.ax[0].legend()
+        # self.ax[1].legend()
+        # self.ax[2].legend()
+        # self.ax[3].legend()
+        # self.ax[4].legend()
+        # self.ax[5].legend()
+        
+
+        self.setlegend()
+
+
+
         # Update plot
         self.update()
+
+
+    def setlegend(self):
+        '''
+        '''
+
+        # Clear current legend 
+        try:
+            for axn in range(len(self.ax)):
+                self.atmp[axn].remove()
+                self.ax[axn].legend_ = None
+        except:
+            pass
+        
+
+
+        # Plot the ATM price or greek (put in legend)
+        atm = np.where(self.Sset >= self.K)[0][0]
+        self.atmp = []
+        self.atmp.append( self.ax[0].scatter(self.Sset[atm], self.prices[atm], c="k", s=10, marker="o", label="ATM Price ({:.1f})".format(round(self.prices[atm],2))) )
+        self.atmp.append( self.ax[1].scatter(self.Sset[atm], self.lambdas[atm], c="k", s=10, marker="o", label="ATM Lambda ({:.1f})".format(round(self.lambdas[atm],2))) )
+        self.atmp.append( self.ax[2].scatter(self.Sset[atm], self.deltas[atm], c="k", s=10, marker="o", label="ATM Delta ({:.2f})".format(round(self.deltas[atm],2))) )
+        self.atmp.append( self.ax[3].scatter(self.Sset[atm], self.gammas[atm], c="k", s=10, marker="o", label="ATM Gamma ({:.1f})".format(round(self.gammas[atm],2))) )
+        self.atmp.append( self.ax[4].scatter(self.Sset[atm], self.thetas[atm], c="k", s=10, marker="o", label="ATM Theta ({:.1f})".format(round(self.thetas[atm],2))) )
+        self.atmp.append( self.ax[5].scatter(self.Sset[atm], self.vegas[atm], c="k", s=10, marker="o", label="ATM Vega ({:.1f})".format(round(self.vegas[atm],2))) )
+
+
+        # Set legend 
+        self.ax[0].legend()
+        self.ax[1].legend()
+        self.ax[2].legend()
+        self.ax[3].legend()
+        self.ax[4].legend()
+        self.ax[5].legend()
+
+  
+
+
 
 
 
@@ -693,26 +754,15 @@ where
 
 
 
-
-        print(self.Sset)
-
-        satm = np.where(self.Sset >= self.K)[0][0]
-        print(self.prices[ satm ])
-        print(self.lambdas[ satm ])
-        print(self.deltas[ satm ])
-
-        self.ax[0].text(0.1, 0.9, "Price {}".format(self.prices[ satm ]), ha='center', va='center', transform=self.ax[0].transAxes)
-
-
-
-
-
+        self.setlegend()
 
 
 
 
         # Update plot
         self.update()
+
+
 
 
     def update(self):
