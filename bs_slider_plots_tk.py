@@ -26,105 +26,193 @@ class Window:
         self.root = root  
         self.root.title("Black-Scholes playground") 
         self.root.geometry("1350x850")
-        self.framelcolbg = "#E4E4E0"
-
+        
+        self.mainbg = "#E0DFDF"
+        self.root.configure(bg=self.mainbg) #"gainsboro")
 
         # ---------------
         # Left frame
         # ---------------
-        self.framel = tk.Frame(master = self.root, relief = tk.RAISED, bg=self.framelcolbg, borderwidth = 1)
+        self.framel = tk.Frame(master = self.root, 
+                            relief = "sunken", 
+                            bg = self.mainbg, 
+                            borderwidth = 1)
         self.framel.place(relx = 0.02, rely = 0.02, relwidth = 0.23, relheight = 0.95)
     
-    
+        # Label setup
+        self.lab_relief = "flat"
+        self.lab_bg     = self.mainbg
+        self.lab_height = 1
+        self.lab_font   = ("Helvetica Neue", 14, "normal")
+
+        # Entry setup
+        self.ent_htick  = 2, 
+        self.ent_bordw  = 0
+        self.ent_width  = 13
+        self.ent_font   = ("Helvetica Neue", 14, "normal")
+        self.ent_bg     = "whitesmoke"    
+
         # Call or Put
-        self.label_CP = tk.Label(master = self.framel, text="Call or Put (C/P)")
-        self.label_CP.rowconfigure(0, weight = 1, minsize = 15)
+        row = 0
+        self.label_CP = tk.Label(master = self.framel, 
+                            text = "Call or Put (C/P)",
+                            relief = self.lab_relief,
+                            bg = self.lab_bg,
+                            height = self.lab_height,
+                            font = self.lab_font)
+        self.label_CP.rowconfigure(row, weight = 1, minsize = 15)
         self.label_CP.columnconfigure(0, weight = 1, minsize = 15)
-        self.label_CP.grid(row = 0, column = 0, padx = 25, pady = 10, sticky="nsew")
+        self.label_CP.grid(row = row, column = 0, padx = 25, pady = (45,10), sticky="w")
         #
-        self.entry_CP = tk.Entry(master = self.framel, width = 6)
-        self.entry_CP.rowconfigure(0, weight = 1, minsize = 15)
+        self.entry_CP = tk.Entry(master = self.framel, 
+                        width = self.ent_width, 
+                        font = self.ent_font,
+                        bg = self.ent_bg, 
+                        highlightthickness = self.ent_htick, 
+                        borderwidth = self.ent_bordw)
+        self.entry_CP.rowconfigure(row, weight = 1, minsize = 15)
         self.entry_CP.columnconfigure(0, weight = 1, minsize = 15)
-        self.entry_CP.grid(row = 0, column = 1, padx = 20, pady = 10, sticky="nsew")
+        self.entry_CP.grid(row = row, column = 1, padx = 20, pady = (45,10), sticky="nsew")
         # Default value
         self.entry_CP.insert(0, "C")
         
             
         # Strike Price
-        self.label_K = tk.Label(master = self.framel, text="Strike Price")
-        self.label_K.rowconfigure(1, weight=1, minsize=15)
+        row = row + 1
+        self.label_K = tk.Label(master = self.framel, 
+                            text = "Strike Price",
+                            relief = self.lab_relief,
+                            bg = self.lab_bg,
+                            height = self.lab_height,
+                            font = self.lab_font)
+        self.label_K.rowconfigure(row, weight=1, minsize=15)
         self.label_K.columnconfigure(0, weight=1, minsize=15)
-        self.label_K.grid(row=1, column=0, padx=25, pady=10, sticky="nsew")
+        self.label_K.grid(row=row, column=0, padx=25, pady=10, sticky="w")
         #
-        self.entry_K = tk.Entry(master = self.framel, width=6)
-        self.entry_K.rowconfigure(1, weight=1, minsize=6)
+        self.entry_K = tk.Entry(master = self.framel, 
+                        width = self.ent_width, 
+                        font = self.ent_font,
+                        bg = self.ent_bg, 
+                        highlightthickness = self.ent_htick, 
+                        borderwidth = self.ent_bordw)
+        self.entry_K.rowconfigure(row, weight=1, minsize=6)
         self.entry_K.columnconfigure(0, weight=1, minsize=6)
-        self.entry_K.grid(row=1, column=1, padx=20, pady=10, sticky="nsew")
+        self.entry_K.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_K.insert(0, 100)
             
         
         # Maturity 
-        self.label_T = tk.Label(master = self.framel, text="Maturity (years)")
-        self.label_T.rowconfigure(2, weight=1, minsize=15)
+        row = row + 1
+        self.label_T = tk.Label(master = self.framel, 
+                        text="Maturity (years)",
+                        relief = self.lab_relief,
+                        bg = self.lab_bg,
+                        height = self.lab_height,
+                        font = self.lab_font)
+        self.label_T.rowconfigure(row, weight=1, minsize=15)
         self.label_T.columnconfigure(0, weight=1, minsize=15)
-        self.label_T.grid(row=2, column=0, padx=25, pady=10, sticky="nsew")
+        self.label_T.grid(row = row, column = 0, padx=25, pady=10, sticky="w")
         #
-        self.entry_T = tk.Entry(master = self.framel, width=6)
-        self.entry_T.rowconfigure(2, weight=1, minsize=6)
+        self.entry_T = tk.Entry(master = self.framel, 
+                        width = self.ent_width, 
+                        font = self.ent_font,
+                        bg = self.ent_bg, 
+                        highlightthickness = self.ent_htick, 
+                        borderwidth = self.ent_bordw)
+        self.entry_T.rowconfigure(row, weight=1, minsize=6)
         self.entry_T.columnconfigure(0, weight=1, minsize=6)
-        self.entry_T.grid(row=2, column=1, padx=20, pady=10, sticky="nsew")
+        self.entry_T.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_T.insert(0, 0.25)
         
         
         # Interest Rate 
-        self.label_r = tk.Label(master = self.framel, text="Interest rate (%)")
-        self.label_r.rowconfigure(3, weight=1, minsize=15)
+        row = row + 1
+        self.label_r = tk.Label(master = self.framel, 
+                            text="Interest rate (%)",
+                            relief = self.lab_relief,
+                            bg = self.lab_bg,
+                            height = self.lab_height,
+                            font = self.lab_font)
+        self.label_r.rowconfigure(row, weight=1, minsize=15)
         self.label_r.columnconfigure(0, weight=1, minsize=15)
-        self.label_r.grid(row=3, column=0, padx=25, pady=10, sticky="nsew")
+        self.label_r.grid(row = row, column = 0, padx=25, pady=10, sticky="w")
         #
-        self.entry_r = tk.Entry(master = self.framel, width=6)
-        self.entry_r.rowconfigure(3, weight=1, minsize=6)
+        self.entry_r = tk.Entry(master = self.framel,
+                        width = self.ent_width, 
+                        font = self.ent_font,
+                        bg = self.ent_bg, 
+                        highlightthickness = self.ent_htick, 
+                        borderwidth = self.ent_bordw)
+        self.entry_r.rowconfigure(row, weight=1, minsize=6)
         self.entry_r.columnconfigure(0, weight=1, minsize=6)
-        self.entry_r.grid(row=3, column=1, padx=20, pady=10, sticky="nsew")
+        self.entry_r.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_r.insert(0, 2)
         
 
         # Volatility
-        self.label_v = tk.Label(master = self.framel, text="Volatility (%)")
-        self.label_v.rowconfigure(4, weight=1, minsize=15)
+        row = row + 1
+        self.label_v = tk.Label(master = self.framel, 
+                            text="Volatility (%)",
+                            relief = self.lab_relief,
+                            bg = self.lab_bg,
+                            height = self.lab_height,
+                            font = self.lab_font)
+        self.label_v.rowconfigure(row, weight=1, minsize=15)
         self.label_v.columnconfigure(0, weight=1, minsize=15)
-        self.label_v.grid(row=4, column=0, padx=25, pady=10, sticky="nsew")
+        self.label_v.grid(row = row, column = 0, padx=25, pady=10, sticky="w")
         #
-        self.entry_v = tk.Entry(master = self.framel, width=6)
-        self.entry_v.rowconfigure(4, weight=1, minsize=6)
+        self.entry_v = tk.Entry(master = self.framel, 
+                        width = self.ent_width, 
+                        font = self.ent_font,
+                        bg = self.ent_bg, 
+                        highlightthickness = self.ent_htick, 
+                        borderwidth = self.ent_bordw)
+        self.entry_v.rowconfigure(row, weight=1, minsize=6)
         self.entry_v.columnconfigure(0, weight=1, minsize=6)
-        self.entry_v.grid(row=4, column=1, padx=20, pady=10, sticky="nsew")
+        self.entry_v.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_v.insert(0, 30)
 
 
         # Dividend Yield
-        self.label_q = tk.Label(master = self.framel, text="Dividend Yield")
-        self.label_q.rowconfigure(5, weight=1, minsize=15)
+        row = row + 1
+        self.label_q = tk.Label(master = self.framel, 
+                            text="Dividend Yield",
+                            relief = self.lab_relief,
+                            bg = self.lab_bg,
+                            height = self.lab_height,
+                            font = self.lab_font)
+        self.label_q.rowconfigure(row, weight=1, minsize=15)
         self.label_q.columnconfigure(0, weight=1, minsize=15)
-        self.label_q.grid(row=5, column=0, padx=25, pady=10, sticky="nsew")
+        self.label_q.grid(row = row, column = 0, padx=25, pady=10, sticky="w")
         #
-        self.entry_q = tk.Entry(master = self.framel, width=6)
-        self.entry_q.rowconfigure(5, weight=1, minsize=6)
-        self.entry_q.columnconfigure(0, weight=1, minsize=6)
-        self.entry_q.grid(row=5, column=1, padx=20, pady=10, sticky="nsew")
+        self.entry_q = tk.Entry(master = self.framel, 
+                        width = self.ent_width, 
+                        font = self.ent_font,
+                        bg = self.ent_bg, 
+                        highlightthickness = self.ent_htick, 
+                        borderwidth = self.ent_bordw)
+        self.entry_q.rowconfigure(row, weight=1, minsize=25)
+        self.entry_q.columnconfigure(0, weight=1, minsize=25)
+        self.entry_q.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_q.insert(0, 0)
 
 
         # Button calculate option
-        self.button = tk.Button(master = self.framel, text="Calculate", command = self.computeoption)
-        self.button.rowconfigure(6, weight=1, minsize=6)
-        self.button.columnconfigure(0, weight=1, minsize=6)
-        self.button.grid(columnspan=6) #row=6, column=1) #, padx=20, pady=10, sticky="nsew")
+        row = row + 1
+        self.button = tk.Button(master = self.framel, 
+                            text = "Calculate", 
+                            highlightthickness = 0, 
+                            borderwidth = 0,
+                            font = self.lab_font,
+                            command = self.computeoption)
+        self.button.rowconfigure(row, weight=1, minsize=10)
+        self.button.columnconfigure(0, weight=1, minsize=10)
+        self.button.grid(columnspan = 2, padx=20, pady=15, sticky="nsew")
 
 
         # Get inserted data 
@@ -143,82 +231,67 @@ class Window:
 
 
         #
-        relief = "flat" 
+        relief = "sunken" 
+
+        self.emptybox = tk.Label(master = self.framel, 
+                        text = '''''',
+                        bg = self.mainbg, 
+                        relief = relief)
+        self.emptybox.grid(columnspan=2, padx=20, pady=20, sticky="w") 
 
 
+
+        # First text
         self.message1 = ''''''
         self.text_box1 = tk.Label(master = self.framel, 
                         text = self.message1,
-                        bg = self.framelcolbg, 
+                        bg = self.mainbg, 
                         relief = relief)
-        self.text_box1.grid(columnspan=5, padx=40, pady=20, sticky="nsew") 
-        self.text_box1.configure(font = ("Helvetica Neue", 12, "normal") )
+        self.text_box1.grid(columnspan=2, padx=20, pady=20, sticky="w") 
+        self.text_box1.configure(font = ("Helvetica Neue", 14, "normal") )
 
-
-
-
+        # First image: the Call or the Put price
         self.img0 = ""
         self.pic0 = tk.Label(master=self.framel, 
                     image = self.img0, 
-                    bg = self.framelcolbg, 
+                    bg = self.mainbg, 
                     relief = relief,
                     width = 10)
-        self.pic0.grid(columnspan=5, padx=20, pady=3, sticky="nsew")
+        self.pic0.grid(columnspan=2, padx=20, pady=0, sticky="nsew")
         
+        # Second text: "where"
+        self.message2 = ''''''
+        self.text_box2 = tk.Label(master = self.framel, 
+                        text = self.message2,
+                        bg = self.mainbg, 
+                        relief = relief)
+        self.text_box2.grid(columnspan=8, padx=20, pady=10, sticky="w") 
+        self.text_box2.configure(font = ("Helvetica Neue", 14, "normal") )
+
+        # Second image: d1
         self.img1 = ""
         self.pic1 = tk.Label(master=self.framel, 
                     image = self.img1, 
-                    bg = self.framelcolbg, 
+                    bg = self.mainbg, 
                     relief = relief,
-                    width = 10)
-        self.pic1.grid(columnspan=5, padx=20, pady=3, sticky="nsew")
+                    width = 15)
+        self.pic1.grid(columnspan=8, padx=20, pady=2, sticky="nsew")
         
+        # Second image: d2
         self.img2 = ""
         self.pic2 = tk.Label(master=self.framel, 
                     image = self.img2, 
-                    bg = self.framelcolbg, 
+                    bg = self.mainbg, 
                     relief = relief,
-                    width = 10)
-        self.pic2.grid(columnspan=5, padx=20, pady=3, sticky="nsew")
+                    width = 15)
+        self.pic2.grid(columnspan=8, padx=20, pady=4, sticky="nsew")
         
 
 
-       
-
-
-
-
-
-
-
-
+    
         ##### to see supported font 
         # from tkinter import font
         # print(font.families())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         # ---------------
@@ -227,7 +300,7 @@ class Window:
 
         # Right main box containing the interactive plot
         self.framer = tk.Frame(master = self.root, bg="#80c1ff")
-        self.framer.place(relx=0.27, rely=0.02, relwidth=0.70, relheight=0.95)
+        self.framer.place(relx=0.27, rely=0.02, relwidth=0.71, relheight=0.95)
 
 
         # Setup plot Figure 
@@ -240,15 +313,6 @@ class Window:
                             bottom = 0.17,
                             hspace = 0.5,
                             wspace = 0.15)
-
-        # Plot title
-        plt.suptitle("Black-Scholes Option playground: {} Option".format("Call" if self.CP == "C" else "Put"),
-                    fontsize   = 15, 
-                    fontweight = "bold",
-                    color      = "k")
-
-        # self.ax = self.fig.subplots(3,2)
-        # self.ax = self.ax.flatten()
             
         self.canvas = FigureCanvasTkAgg(self.fig, self.framer)
         self.canvas.get_tk_widget().pack(fill = "both", expand = True)
@@ -285,9 +349,6 @@ class Window:
         self.slider_T.on_changed(self.onslide)
         self.slider_r.on_changed(self.onslide)
         self.slider_v.on_changed(self.onslide)
-
-
- 
 
 
 
@@ -405,48 +466,6 @@ class Window:
                     initcolor = "gray")
 
 
-    def updatedescription(self):
-        '''
-        '''
-
-        # Update Call or Put price according to entry data
-        auxoption = "Call" if self.CP == "C" else "Put"
-        self.message1 = '''
-The Black-Scholes ''' + auxoption + ''' price is given by:
-        '''
-        self.text_box1.configure(text=self.message1)
-
-        # Updating formula for the Call or the Put
-        if auxoption == "Call":
-            img0 = (Image.open("data/callprice.png")) 
-        else:
-            img0 = (Image.open("data/putprice.png")) 
-        img0 = img0.resize((240,19), Image.ANTIALIAS)
-        self.img0 = ImageTk.PhotoImage(img0)
-        self.pic0.configure(image=self.img0)
-
-
-        # Updating formula for d1
-        img1 = (Image.open("data/d1.png")) 
-        img1 = img1.resize((250,48), Image.ANTIALIAS)
-        self.img1 = ImageTk.PhotoImage(img1)
-        self.pic1.configure(image=self.img1)
-
-
-        # Updating formula for d2
-        img2 = (Image.open("data/d2.png")) 
-        img2 = img2.resize((115,20), Image.ANTIALIAS)
-        self.img2 = ImageTk.PhotoImage(img2)
-        self.pic2.configure(image=self.img2)
-
-
-
-
-
-
-
-
-
 
     def computeoption(self):
         '''
@@ -472,27 +491,66 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
                                  self.v, 
                                  q = self.q) for s in self.Sset ]
 
-
-
-
         # Update description
         self.updatedescription()
 
-
-
-
-
-
-
         # Plot option price and greeks
         self.plotoption()
+
+
+
+    def updatedescription(self):
+        '''
+        '''
+
+        # Message 1: Update Call or Put price according to entry data
+        auxoption = "Call" if self.CP == "C" else "Put"
+        self.message1 = '''
+The Black-Scholes ''' + auxoption + ''' price is given by:
+        '''
+        self.text_box1.configure(text = self.message1)
+
+        # Image 1: Updating formula for the Call or the Put
+        if auxoption == "Call":
+            img0 = (Image.open("data/callprice.png")) 
+        else:
+            img0 = (Image.open("data/putprice.png")) 
+        img0 = img0.resize((240,19), Image.ANTIALIAS)
+        self.img0 = ImageTk.PhotoImage(img0)
+        self.pic0.configure(image=self.img0)
+
+        # Message 2: where
+        self.message2 = '''
+where 
+       '''
+        self.text_box2.configure(text = self.message2)
+
+
+        # Updating formula for d1
+        img1 = (Image.open("data/d1.png")) 
+        img1 = img1.resize((245,43), Image.ANTIALIAS)
+        self.img1 = ImageTk.PhotoImage(img1)
+        self.pic1.configure(image=self.img1)
+
+
+        # Updating formula for d2
+        img2 = (Image.open("data/d2.png")) 
+        img2 = img2.resize((115,20), Image.ANTIALIAS)
+        self.img2 = ImageTk.PhotoImage(img2)
+        self.pic2.configure(image=self.img2)
+
+
+        # Plot title
+        plt.suptitle("Black-Scholes Option playground: {} Option".format("Call" if self.CP == "C" else "Put"),
+                    fontsize   = 15, 
+                    fontweight = "bold",
+                    color      = "k")
 
 
     def plotoption(self):
         '''
         Plot 
         '''
-
         # Clear current axis 
         try:
             for axn in range(len(self.ax)):
@@ -546,15 +604,7 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
         self.ax[4].grid()    
         self.ax[5].grid()   
 
-        # Set titles 
-        # self.ax[0].set_title("Price",  fontsize=11, fontweight="bold")
-        # self.ax[1].set_title("Lambda", fontsize=11, fontweight="bold")
-        # self.ax[2].set_title("Delta",  fontsize=11, fontweight="bold")
-        # self.ax[3].set_title("Gamma",  fontsize=11, fontweight="bold")
-        # self.ax[4].set_title("Theta",  fontsize=11, fontweight="bold")
-        # self.ax[5].set_title("Vega",   fontsize=11, fontweight="bold") 
 
-        # self.ax[0].set_xticklabels(self.Sset, fontsize=10)
         xyfontsize = 8 
         plt.setp(self.ax[0].get_xticklabels(), fontsize=xyfontsize)
         plt.setp(self.ax[0].get_yticklabels(), fontsize=xyfontsize)
@@ -576,6 +626,7 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
 
         # Update plot
         self.update()
+
 
 
     def onslide(self, val):
@@ -653,10 +704,6 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
             self.ax[5].set_ylim([min(self.vegas)  - 0.1*max(self.vegas),  max(self.vegas)  + 0.1*max(self.vegas)])
 
 
-
-
-
-
         # Update plot
         self.update()
 
@@ -669,184 +716,7 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
 
 
 
-
-
-if __name__ == "__main__":
-    '''
-    '''
-    
+if __name__ == "__main__":    
     root = tk.Tk()
-    
     gui = Window(root)
-    
     gui.root.mainloop()
-    
-    
-
-
-
-
-
-
-
-# window = tk.Tk()
-
-# window.geometry("1250x800")
-
-
-
-# framel = tk.Frame(master=window, relief=tk.RAISED, bg="#E4E4E0", borderwidth=1)
-# framel.place(relx=0.02, rely=0.02, relwidth=0.3, relheight=0.95)
-
-# # button_K = tk.Label(master=framel, text="Strike Price")
-# # button_K.place(relx=0.05, rely=0.05, relwidth=0.2, relheight=0.05)
-
-
-# # Call or Put
-# label_K = tk.Label(master=framel, text="Call or Put")
-# label_K.rowconfigure(0, weight=1, minsize=15)
-# label_K.columnconfigure(0, weight=1, minsize=15)
-# label_K.grid(row=0, column=0, padx=25, pady=10, sticky="nsew")
-
-# entry_K = tk.Entry(master=framel, width=6)
-# entry_K.rowconfigure(0, weight=1, minsize=15)
-# entry_K.columnconfigure(0, weight=1, minsize=15)
-# entry_K.grid(row=0, column=1, padx=20, pady=10, sticky="nsew")
-
-
-# # Strike Price
-# label_K = tk.Label(master=framel, text="Strike Price")
-# label_K.rowconfigure(1, weight=1, minsize=15)
-# label_K.columnconfigure(0, weight=1, minsize=15)
-# label_K.grid(row=1, column=0, padx=25, pady=10, sticky="nsew")
-
-# entry_K = tk.Entry(master=framel, width=6)
-# entry_K.rowconfigure(1, weight=1, minsize=6)
-# entry_K.columnconfigure(0, weight=1, minsize=6)
-# entry_K.grid(row=1, column=1, padx=20, pady=10, sticky="nsew")
-
-
-# # Maturity 
-# label_T = tk.Label(master=framel, text="Maturity (years)")
-# label_T.rowconfigure(2, weight=1, minsize=15)
-# label_T.columnconfigure(0, weight=1, minsize=15)
-# label_T.grid(row=2, column=0, padx=25, pady=10, sticky="nsew")
-
-# entry_T = tk.Entry(master=framel, width=6)
-# entry_T.rowconfigure(2, weight=1, minsize=6)
-# entry_T.columnconfigure(0, weight=1, minsize=6)
-# entry_T.grid(row=2, column=1, padx=20, pady=10, sticky="nsew")
-
-
-
-
-# button = Button(framel, text="Calculate", command = self.update_values)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# framer = tk.Frame(master=window, bg="#80c1ff")
-# framer.place(relx=0.35, rely=0.02, relwidth=0.60, relheight=0.95)
-
-
-
-# # fig = Figure()
-
-# #### Set up plot window
-# # fig = plt.figure(figsize=(10,8), facecolor="whitesmoke")
-# fig = plt.figure(facecolor="whitesmoke")
-# #
-# plt.subplots_adjust(left   = 0.075,
-#                     right  = 0.95,
-#                     top    = 0.95,
-#                     bottom = 0.22,
-#                     hspace = 0.65)
-# #
-# ax = fig.subplots(3,2)
-# ax = ax.flatten()
-
-
-
-# canvas = FigureCanvasTkAgg(fig, framer)
-# canvas.get_tk_widget().pack(fill="both", expand=True)
-
-# # im = np.array(np.random.rand(10,10,10))
-
-# # ax = fig.subplots(1,1)
-
-# # axmax  = fig.add_axes([0.25, 0.01, 0.65, 0.03])
-# # smax = Slider(axmax, 'Max', 0, np.max(im), valinit=50)
-
-
-# # Maturity slider (xpos, ypos, width, height)
-# slider_T_ax = plt.axes([0.3, 0.15, 0.50, 0.015])
-# slider_T    = Slider(ax        = slider_T_ax, 
-#                       label     = "Time to Maturity (years)", 
-#                       valmin    = 0, 
-#                       valmax    = 4, 
-#                       valstep   = 0.02, 
-#                       valinit   = 1,
-#                       color     = "gray",
-#                       initcolor = "gray")
-
-
-# # # Interest Rate slider (xpos, ypos, width, height)
-# # slider_r_ax = plt.axes([0.3, 0.10, 0.50, 0.015])
-# # slider_r    = Slider(ax        = slider_r_ax, 
-# #                      label     = "Risk-free interest rate (%)", 
-# #                      valmin    = IVal["rmin"],  
-# #                      valmax    = IVal["rmax"], 
-# #                      valstep   = IVal["Tstp"], 
-# #                      valinit   = IVal["r"],   
-# #                      color     = "gray",
-# #                      initcolor = "gray")
-
-    
-# # # Volatility slider (xpos, ypos, width, height)
-# # slider_v_ax = plt.axes([0.3, 0.05, 0.50, 0.015])
-# # slider_v    = Slider(ax        = slider_v_ax, 
-# #                      label     = "Volatility (%)", 
-# #                      valmin    = IVal["vmin"],  
-# #                      valmax    = IVal["vmax"], 
-# #                      valstep   = IVal["vstp"], 
-# #                      valinit   = IVal["v"],   
-# #                      color     = "gray",
-# #                      initcolor = "gray")
-    
-
-
-# #### Option data
-# option  = [ BSOption("C", 
-#                       s, 
-#                       100, 
-#                       2.5, 
-#                       5/100, 
-#                       30/100, 
-#                       q = 0) for s in np.linspace(50,150,100) ]
-
-
-
-# # tracker = IndexTracker(ax, im)
-# # canvas.mpl_connect('scroll_event', tracker.onscroll)
-# # canvas.mpl_connect('button_release_event', tracker.contrast) #add this for contrast change
-
-# tracker = InteractPlot(ax, option)
-# # canvas.mpl_connect('scroll_event', tracker.onslide)
-# # canvas.mpl_connect('button_release_event', tracker.contrast) #add this for contrast change
-
-# slider_T.on_changed(tracker.onslide)
-
-
-
-
-# window.mainloop()
