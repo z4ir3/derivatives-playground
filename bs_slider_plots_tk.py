@@ -591,7 +591,7 @@ where
         self.ax[4].grid()    
         self.ax[5].grid()   
 
-
+        # Tick labels
         xyfontsize = 8 
         plt.setp(self.ax[0].get_xticklabels(), fontsize=xyfontsize)
         plt.setp(self.ax[0].get_yticklabels(), fontsize=xyfontsize)
@@ -642,6 +642,7 @@ where
         self.thetas  = [o.theta()     for o in self.option]    
         self.vegas   = [o.vega()      for o in self.option]
   
+        # Update plot 
         self.p0.set_ydata(self.prices)
         self.p1.set_ydata(self.lambdas)
         self.p2.set_ydata(self.deltas)
@@ -689,6 +690,25 @@ where
         # Vega            
         if current_T != 0:
             self.ax[5].set_ylim([min(self.vegas)  - 0.1*max(self.vegas),  max(self.vegas)  + 0.1*max(self.vegas)])
+
+
+
+
+        print(self.Sset)
+
+        satm = np.where(self.Sset >= self.K)[0][0]
+        print(self.prices[ satm ])
+        print(self.lambdas[ satm ])
+        print(self.deltas[ satm ])
+
+        self.ax[0].text(0.1, 0.9, "Price {}".format(self.prices[ satm ]), ha='center', va='center', transform=self.ax[0].transAxes)
+
+
+
+
+
+
+
 
 
         # Update plot
