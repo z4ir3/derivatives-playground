@@ -26,15 +26,16 @@ class Window:
         self.root = root  
         self.root.title("Black-Scholes playground") 
         self.root.geometry("1350x850")
-        
+        #        
         self.mainbg = "#E0DFDF"
         self.root.configure(bg=self.mainbg) #"gainsboro")
+
 
         # ---------------
         # Left frame
         # ---------------
         self.framel = tk.Frame(master = self.root, 
-                            relief = "sunken", 
+                            relief = "flat", 
                             bg = self.mainbg, 
                             borderwidth = 1)
         self.framel.place(relx = 0.02, rely = 0.02, relwidth = 0.23, relheight = 0.95)
@@ -228,34 +229,26 @@ class Window:
 
 
 
-
-
-        #
-        relief = "sunken" 
-
-        self.emptybox = tk.Label(master = self.framel, 
-                        text = '''''',
-                        bg = self.mainbg, 
-                        relief = relief)
-        self.emptybox.grid(columnspan=2, padx=20, pady=20, sticky="w") 
-
-
+        # Descriptions
+        self.descrelief = "flat" 
+        self.descfont   = ("Helvetica Neue", 14, "normal")
+        # To see supported font: from tkinter import font; print(font.families())
 
         # First text
         self.message1 = ''''''
         self.text_box1 = tk.Label(master = self.framel, 
                         text = self.message1,
                         bg = self.mainbg, 
-                        relief = relief)
-        self.text_box1.grid(columnspan=2, padx=20, pady=20, sticky="w") 
-        self.text_box1.configure(font = ("Helvetica Neue", 14, "normal") )
+                        relief = self.descrelief)
+        self.text_box1.grid(columnspan=2, padx=20, pady = (50,20), sticky="w") 
+        self.text_box1.configure(font = self.descfont)
 
         # First image: the Call or the Put price
         self.img0 = ""
         self.pic0 = tk.Label(master=self.framel, 
                     image = self.img0, 
                     bg = self.mainbg, 
-                    relief = relief,
+                    relief = self.descrelief,
                     width = 10)
         self.pic0.grid(columnspan=2, padx=20, pady=0, sticky="nsew")
         
@@ -264,34 +257,28 @@ class Window:
         self.text_box2 = tk.Label(master = self.framel, 
                         text = self.message2,
                         bg = self.mainbg, 
-                        relief = relief)
-        self.text_box2.grid(columnspan=8, padx=20, pady=10, sticky="w") 
-        self.text_box2.configure(font = ("Helvetica Neue", 14, "normal") )
+                        relief = self.descrelief)
+        self.text_box2.grid(columnspan=2, padx=20, pady=10, sticky="w") 
+        self.text_box2.configure(font = self.descfont)
 
         # Second image: d1
         self.img1 = ""
         self.pic1 = tk.Label(master=self.framel, 
                     image = self.img1, 
                     bg = self.mainbg, 
-                    relief = relief,
+                    relief = self.descrelief,
                     width = 15)
-        self.pic1.grid(columnspan=8, padx=20, pady=2, sticky="nsew")
+        self.pic1.grid(columnspan=2, padx=20, pady=2, sticky="nsew")
         
         # Second image: d2
         self.img2 = ""
         self.pic2 = tk.Label(master=self.framel, 
                     image = self.img2, 
                     bg = self.mainbg, 
-                    relief = relief,
+                    relief = self.descrelief,
                     width = 15)
-        self.pic2.grid(columnspan=8, padx=20, pady=4, sticky="nsew")
+        self.pic2.grid(columnspan=2, padx=20, pady=(10,0), sticky="nsew")
         
-
-
-    
-        ##### to see supported font 
-        # from tkinter import font
-        # print(font.families())
 
 
         # ---------------
@@ -515,7 +502,7 @@ The Black-Scholes ''' + auxoption + ''' price is given by:
             img0 = (Image.open("data/callprice.png")) 
         else:
             img0 = (Image.open("data/putprice.png")) 
-        img0 = img0.resize((240,19), Image.ANTIALIAS)
+        img0 = img0.resize((240,17), Image.ANTIALIAS)
         self.img0 = ImageTk.PhotoImage(img0)
         self.pic0.configure(image=self.img0)
 
@@ -535,13 +522,13 @@ where
 
         # Updating formula for d2
         img2 = (Image.open("data/d2.png")) 
-        img2 = img2.resize((115,20), Image.ANTIALIAS)
+        img2 = img2.resize((112,18), Image.ANTIALIAS)
         self.img2 = ImageTk.PhotoImage(img2)
         self.pic2.configure(image=self.img2)
 
 
         # Plot title
-        plt.suptitle("Black-Scholes Option playground: {} Option".format("Call" if self.CP == "C" else "Put"),
+        plt.suptitle("Black-Scholes Option Pricing: {} Option".format("Call" if self.CP == "C" else "Put"),
                     fontsize   = 15, 
                     fontweight = "bold",
                     color      = "k")
@@ -578,7 +565,7 @@ where
         self.p5, = self.ax[5].plot(self.Sset, self.vegas,   color="forestgreen")
 
         # Set x-labels
-        xfontsize = 8
+        xfontsize = 9
         self.ax[0].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
         self.ax[1].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
         self.ax[2].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
@@ -587,7 +574,7 @@ where
         self.ax[5].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
 
         # Set y-labels    
-        yfontsize = 8
+        yfontsize = 9
         ycol = "k"
         self.ax[0].set_ylabel("Price (USD)", fontsize=yfontsize, color=ycol)
         self.ax[1].set_ylabel("Lambda", fontsize=yfontsize, color=ycol)
