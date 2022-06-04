@@ -1,21 +1,21 @@
 '''
 Copyright (c) Leonardo Rocchi
 '''
-# from ast import Return
 import numpy as np
 import tkinter as tk
+import matplotlib.pyplot as plt
+
 from tkinter import messagebox
 from matplotlib.widgets import Slider
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-# from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-from sklearn.metrics import v_measure_score
+from PIL import ImageTk, Image
+
+# from sklearn.metrics import v_measure_score
 plt.style.use("seaborn-dark")
 
 from functions.blackscholes import BSOption
 
 
-from PIL import ImageTk, Image
 
 class Window:
     '''
@@ -331,7 +331,6 @@ class Window:
                                             vstp = 1, 
                                             vini = self.v * 100)
 
-
         # Calling the interactive plot method as soon as a slider is touched
         self.slider_T.on_changed(self.onslide)
         self.slider_r.on_changed(self.onslide)
@@ -612,27 +611,8 @@ where
         plt.setp(self.ax[5].get_yticklabels(), fontsize=xyfontsize)
 
 
-        # # Plot the ATM price or greek (put in legend)
-        # atm = np.where(self.Sset >= self.K)[0][0]
-        # self.ax[0].scatter(self.Sset[atm], self.prices[atm], c="k", s=10, marker="o", label="ATM Price ({:.1f})".format(round(self.prices[atm],2)))
-        # self.ax[1].scatter(self.Sset[atm], self.lambdas[atm], c="k", s=10, marker="o", label="ATM Lambda ({:.1f})".format(round(self.lambdas[atm],2)))
-        # self.ax[2].scatter(self.Sset[atm], self.deltas[atm], c="k", s=10, marker="o", label="ATM Delta ({:.2f})".format(round(self.deltas[atm],2)))
-        # self.ax[3].scatter(self.Sset[atm], self.gammas[atm], c="k", s=10, marker="o", label="ATM Gamma ({:.1f})".format(round(self.gammas[atm],2)))
-        # self.ax[4].scatter(self.Sset[atm], self.thetas[atm], c="k", s=10, marker="o", label="ATM Theta ({:.1f})".format(round(self.thetas[atm],2)))
-        # self.ax[5].scatter(self.Sset[atm], self.vegas[atm], c="k", s=10, marker="o", label="ATM Vega ({:.1f})".format(round(self.vegas[atm],2)))
-
-        # # Set legend 
-        # self.ax[0].legend()
-        # self.ax[1].legend()
-        # self.ax[2].legend()
-        # self.ax[3].legend()
-        # self.ax[4].legend()
-        # self.ax[5].legend()
-        
-
+        # Plot the ATM price or greek (put in legend)
         self.setlegend()
-
-
 
         # Update plot
         self.update()
@@ -640,9 +620,9 @@ where
 
     def setlegend(self):
         '''
+        Set the legend for the ATM price and greek
         '''
-
-        # Clear current legend 
+        # Clear current legend and remove current ATM points
         try:
             for axn in range(len(self.ax)):
                 self.atmp[axn].remove()
@@ -650,18 +630,16 @@ where
         except:
             pass
         
-
-
         # Plot the ATM price or greek (put in legend)
-        atm = np.where(self.Sset >= self.K)[0][0]
+        idx = np.where(self.Sset >= self.K)[0][0]
+        atm = self.Sset[idx]
         self.atmp = []
-        self.atmp.append( self.ax[0].scatter(self.Sset[atm], self.prices[atm], c="k", s=10, marker="o", label="ATM Price ({:.1f})".format(round(self.prices[atm],2))) )
-        self.atmp.append( self.ax[1].scatter(self.Sset[atm], self.lambdas[atm], c="k", s=10, marker="o", label="ATM Lambda ({:.1f})".format(round(self.lambdas[atm],2))) )
-        self.atmp.append( self.ax[2].scatter(self.Sset[atm], self.deltas[atm], c="k", s=10, marker="o", label="ATM Delta ({:.2f})".format(round(self.deltas[atm],2))) )
-        self.atmp.append( self.ax[3].scatter(self.Sset[atm], self.gammas[atm], c="k", s=10, marker="o", label="ATM Gamma ({:.1f})".format(round(self.gammas[atm],2))) )
-        self.atmp.append( self.ax[4].scatter(self.Sset[atm], self.thetas[atm], c="k", s=10, marker="o", label="ATM Theta ({:.1f})".format(round(self.thetas[atm],2))) )
-        self.atmp.append( self.ax[5].scatter(self.Sset[atm], self.vegas[atm], c="k", s=10, marker="o", label="ATM Vega ({:.1f})".format(round(self.vegas[atm],2))) )
-
+        self.atmp.append( self.ax[0].scatter(atm, self.prices[idx],  c="k", s=10, marker="o", label="ATM Price ({:.1f})".format(round(self.prices[idx],2))) )
+        self.atmp.append( self.ax[1].scatter(atm, self.lambdas[idx], c="k", s=10, marker="o", label="ATM Lambda ({:.1f})".format(round(self.lambdas[idx],2))) )
+        self.atmp.append( self.ax[2].scatter(atm, self.deltas[idx],  c="k", s=10, marker="o", label="ATM Delta ({:.2f})".format(round(self.deltas[idx],2))) )
+        self.atmp.append( self.ax[3].scatter(atm, self.gammas[idx],  c="k", s=10, marker="o", label="ATM Gamma ({:.1f})".format(round(self.gammas[idx],2))) )
+        self.atmp.append( self.ax[4].scatter(atm, self.thetas[idx],  c="k", s=10, marker="o", label="ATM Theta ({:.1f})".format(round(self.thetas[idx],2))) )
+        self.atmp.append( self.ax[5].scatter(atm, self.vegas[idx],   c="k", s=10, marker="o", label="ATM Vega ({:.1f})".format(round(self.vegas[idx],2))) )
 
         # Set legend 
         self.ax[0].legend()
@@ -672,11 +650,6 @@ where
         self.ax[5].legend()
 
   
-
-
-
-
-
     def onslide(self, val):
         '''
         Recompute option data and update plot when slider values changes
@@ -753,15 +726,11 @@ where
             self.ax[5].set_ylim([min(self.vegas)  - 0.1*max(self.vegas),  max(self.vegas)  + 0.1*max(self.vegas)])
 
 
-
+        # Plot the ATM price or greek (put in legend)
         self.setlegend()
-
-
-
 
         # Update plot
         self.update()
-
 
 
 
