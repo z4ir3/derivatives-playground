@@ -1,7 +1,11 @@
+'''
+Black-Scholes option pricing class
+Copyright (c) @author: leonardorocchi
+'''
+
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
-
 
 class BSOption:
     
