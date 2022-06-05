@@ -6,15 +6,11 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 
 from tkinter import messagebox
+from PIL import ImageTk, Image
 from matplotlib.widgets import Slider
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from PIL import ImageTk, Image
-
-# from sklearn.metrics import v_measure_score
-plt.style.use("seaborn-dark")
-
 from functions.blackscholes import BSOption
-
+plt.style.use("seaborn-dark")
 
 
 class Window:
@@ -320,7 +316,7 @@ class Window:
         self.slider_r = self.define_slider(self.slider_r_ax,
                                             labl = "Risk-free interest rate (%)", 
                                             vmin = 1, 
-                                            vmax = 7, 
+                                            vmax = 10, 
                                             vstp = 0.1, 
                                             vini = self.r * 100)
 
@@ -370,12 +366,13 @@ class Window:
         try:
             T = float(self.entry_T.get())
             if T < 0:
-                # If a negative maturity is entered, then return 0 (expiration)
-                return 0 
+                messagebox.showerror("Maturity value error", "Enter a maturity at least equal to 0 (expiration)")
+            elif T > 5:
+                messagebox.showerror("Maturity value error", "Enter a maturity at least equal to 5 (years)")
             else:
                 return T
         except:
-            messagebox.showerror("Maturity value error", "Enter a valid maturity value")
+            messagebox.showerror("Maturity value error", "Enter a valid maturity value (between 0 and 5 years)")
     
 
     def get_r(self):
@@ -386,11 +383,13 @@ class Window:
             r = float(self.entry_r.get())
             if r < 0.01:
                 # Returns a mininum of 0.01% (1 basis point)
-                messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01")
+                messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01(%)")
+            elif r > 10:
+                messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 10(%)")
             else:
                 return r / 100
         except:
-            messagebox.showerror("Interest Rate value error", "Enter a valid interest rate value")
+            messagebox.showerror("Interest Rate value error", "Enter a valid interest rate value (between 0.01% and 10%)")
 
 
     def get_v(self):
@@ -401,11 +400,13 @@ class Window:
             v = float(self.entry_v.get()) 
             if v < 1:
                 # Returns a mininum of 1%
-                messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1")
+                messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1(%)")
+            elif v > 100:
+                messagebox.showerror("Volatility value error", "Enter at least a volatility equal 100(%)")
             else:
                 return v / 100
         except:
-            messagebox.showerror("Volatility value error", "Enter a valid volatility value")
+            messagebox.showerror("Volatility value error", "Enter a valid volatility value (between 1% and 100%)")
 
 
     def get_q(self):
@@ -416,7 +417,7 @@ class Window:
             q = float(self.entry_q.get())
             if q < 0:
                 # If a negative dividend yield is entered, then return 0
-                return 0
+                messagebox.showerror("Dividend Yield value error", "Enter at least a dividend yield equal 0(%)")
             else:
                 return q
         except:
