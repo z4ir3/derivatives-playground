@@ -1,10 +1,11 @@
 '''
-Copyright (c) Leonardo Rocchi
+Interactive Black-Scholes prices and greeks plot using matplotlib sliders integrated with a tkinter GUI
+Copyright (c) @author: leonardorocchi
 '''
+
 import numpy as np
 import tkinter as tk
 import matplotlib.pyplot as plt
-
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from matplotlib.widgets import Slider
@@ -15,16 +16,15 @@ plt.style.use("seaborn-dark")
 
 class Window:
     '''
+    GUI for Black-Scholes option pricing plots
     '''
     def __init__(self, root):
-        '''
-        '''
         self.root = root  
         self.root.title("Black-Scholes playground") 
         self.root.geometry("1350x850")
         #        
         self.mainbg = "#E0DFDF"
-        self.root.configure(bg=self.mainbg) #"gainsboro")
+        self.root.configure(bg=self.mainbg)
 
 
         # ---------------
@@ -72,8 +72,7 @@ class Window:
         self.entry_CP.grid(row = row, column = 1, padx = 20, pady = (45,10), sticky="nsew")
         # Default value
         self.entry_CP.insert(0, "C")
-        
-            
+             
         # Strike Price
         row = row + 1
         self.label_K = tk.Label(master = self.framel, 
@@ -97,8 +96,7 @@ class Window:
         self.entry_K.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_K.insert(0, 100)
-            
-        
+             
         # Maturity 
         row = row + 1
         self.label_T = tk.Label(master = self.framel, 
@@ -121,8 +119,7 @@ class Window:
         self.entry_T.columnconfigure(0, weight=1, minsize=6)
         self.entry_T.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
-        self.entry_T.insert(0, 0.25)
-        
+        self.entry_T.insert(0, 0.25) 
         
         # Interest Rate 
         row = row + 1
@@ -148,7 +145,6 @@ class Window:
         # Default value
         self.entry_r.insert(0, 2)
         
-
         # Volatility
         row = row + 1
         self.label_v = tk.Label(master = self.framel, 
@@ -172,7 +168,6 @@ class Window:
         self.entry_v.grid(row = row, column = 1, padx=20, pady=10, sticky="nsew")
         # Default value
         self.entry_v.insert(0, 30)
-
 
         # Dividend Yield
         row = row + 1
@@ -198,7 +193,6 @@ class Window:
         # Default value
         self.entry_q.insert(0, 0)
 
-
         # Button calculate option
         row = row + 1
         self.button = tk.Button(master = self.framel, 
@@ -211,7 +205,6 @@ class Window:
         self.button.columnconfigure(0, weight=1, minsize=10)
         self.button.grid(columnspan = 2, padx=20, pady=15, sticky="nsew")
 
-
         # Get inserted data 
         self.CP     = self.get_CP()
         self.K      = self.get_K() 
@@ -222,8 +215,6 @@ class Window:
         self.Smin   = self.get_Smin(self.K)
         self.Smax   = self.get_Smax(self.K)
         self.Sset   = self.get_Sset(self.Smin, self.Smax)
-
-
 
         # Descriptions
         self.descrelief = "flat" 
@@ -266,7 +257,7 @@ class Window:
                     width = 15)
         self.pic1.grid(columnspan=2, padx=20, pady=2, sticky="nsew")
         
-        # Second image: d2
+        # Third image: d2
         self.img2 = ""
         self.pic2 = tk.Label(master=self.framel, 
                     image = self.img2, 
@@ -276,7 +267,6 @@ class Window:
         self.pic2.grid(columnspan=2, padx=20, pady=(10,0), sticky="nsew")
         
 
-
         # ---------------
         # Right frame
         # ---------------
@@ -284,7 +274,6 @@ class Window:
         # Right main box containing the interactive plot
         self.framer = tk.Frame(master = self.root, bg="#80c1ff")
         self.framer.place(relx=0.27, rely=0.02, relwidth=0.71, relheight=0.95)
-
 
         # Setup plot Figure 
         self.fig = plt.figure(facecolor = "whitesmoke")
@@ -297,6 +286,7 @@ class Window:
                             hspace = 0.5,
                             wspace = 0.15)
             
+        # Setup the plot into the GUI
         self.canvas = FigureCanvasTkAgg(self.fig, self.framer)
         self.canvas.get_tk_widget().pack(fill = "both", expand = True)
 
@@ -306,6 +296,7 @@ class Window:
         self.slider_r_ax = plt.axes([0.3, 0.05, 0.50, 0.015])
         self.slider_v_ax = plt.axes([0.3, 0.02, 0.50, 0.015])
 
+        # Maturity slider
         self.slider_T = self.define_slider(self.slider_T_ax,
                                             labl = "Time to Maturity (years)", 
                                             vmin = 0, 
@@ -313,6 +304,7 @@ class Window:
                                             vstp = 0.05, 
                                             vini = self.T)
 
+        # Interest rate slider
         self.slider_r = self.define_slider(self.slider_r_ax,
                                             labl = "Risk-free interest rate (%)", 
                                             vmin = 1, 
@@ -320,6 +312,7 @@ class Window:
                                             vstp = 0.1, 
                                             vini = self.r * 100)
 
+        # Volatility slider
         self.slider_v = self.define_slider(self.slider_v_ax,
                                             labl = "Volatility (%)", 
                                             vmin = 1, 
@@ -333,13 +326,13 @@ class Window:
         self.slider_v.on_changed(self.onslide)
 
 
-
     def get_CP(self):
         '''
         Get the Call or Put entry
         '''
         CP = str(self.entry_CP.get()) 
         if CP not in ["C", "P"]:
+            # Returns error if neither "C" nor "P" is entered
             messagebox.showerror("Option type error", "Enter either 'C' or 'P' in the Call/Put field")
         else:
             return CP
@@ -352,6 +345,7 @@ class Window:
         try:
             K = float(self.entry_K.get()) 
             if K < 1:
+                # Returns error if a negative strike price is entered
                 messagebox.showerror("Strike value error", "Enter at least a strike price equal to 1")
             else:
                 return K
@@ -366,8 +360,10 @@ class Window:
         try:
             T = float(self.entry_T.get())
             if T < 0:
+                # Returns error if a negative maturity is entered
                 messagebox.showerror("Maturity value error", "Enter a maturity at least equal to 0 (expiration)")
             elif T > 5:
+                # Returns a maximum maturity of 5 years 
                 messagebox.showerror("Maturity value error", "Enter a maturity at least equal to 5 (years)")
             else:
                 return T
@@ -385,6 +381,7 @@ class Window:
                 # Returns a mininum of 0.01% (1 basis point)
                 messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 0.01(%)")
             elif r > 10:
+                # Returns a maximum interest rate of 10% (1000 basis point)
                 messagebox.showerror("Interest Rate value error", "Enter at least an interest rate equal to 10(%)")
             else:
                 return r / 100
@@ -399,9 +396,10 @@ class Window:
         try:
             v = float(self.entry_v.get()) 
             if v < 1:
-                # Returns a mininum of 1%
+                # Returns a mininum volatility of 1% 
                 messagebox.showerror("Volatility value error", "Enter at least a volatility equal 1(%)")
             elif v > 100:
+                # Return a maximum volatility of 100%
                 messagebox.showerror("Volatility value error", "Enter at least a volatility equal 100(%)")
             else:
                 return v / 100
@@ -426,16 +424,27 @@ class Window:
 
     @staticmethod 
     def get_Smin(K):
+        '''
+        Automatic generation of a minimum underlying price (for plot)
+        calculated as 60% below the input strike price 
+        '''
         return round(K * (1 - 0.60), 0)
 
 
     @staticmethod 
     def get_Smax(K):
+        '''
+        Automatic generation of a maximum underlying price (for plot)
+        calculated as 60% above the input strike price 
+        '''
         return round(K * (1 + 0.60), 0)
 
 
     @staticmethod 
     def get_Sset(Smin, Smax):
+        '''
+        Generation of 150 underlying prices for the plots
+        '''
         return np.linspace(Smin, Smax, 150)
 
 
@@ -451,7 +460,6 @@ class Window:
                     valinit   = vini,
                     color     = "gray",
                     initcolor = "gray")
-
 
 
     def computeoption(self):
@@ -485,11 +493,10 @@ class Window:
         self.plotoption()
 
 
-
     def updatedescription(self):
         '''
+        Updating the description (Call/Put price pic) according to the Option inserted 
         '''
-
         # Message 1: Update Call or Put price according to entry data
         auxoption = "Call" if self.CP == "C" else "Put"
         self.message1 = '''
@@ -512,20 +519,17 @@ where
        '''
         self.text_box2.configure(text = self.message2)
 
-
         # Updating formula for d1
         img1 = (Image.open("data/d1.png")) 
         img1 = img1.resize((245,43), Image.ANTIALIAS)
         self.img1 = ImageTk.PhotoImage(img1)
         self.pic1.configure(image=self.img1)
 
-
         # Updating formula for d2
         img2 = (Image.open("data/d2.png")) 
         img2 = img2.resize((112,18), Image.ANTIALIAS)
         self.img2 = ImageTk.PhotoImage(img2)
         self.pic2.configure(image=self.img2)
-
 
         # Plot title
         plt.suptitle("Black-Scholes Option Pricing: {} Option".format("Call" if self.CP == "C" else "Put"),
@@ -546,7 +550,6 @@ where
         except:
             self.ax = self.fig.subplots(3,2)
             self.ax = self.ax.flatten()
-
 
         # Get prices and greeks for all set of underlyings
         self.prices  = [o.price()     for o in self.option]
@@ -610,7 +613,6 @@ where
 
         plt.setp(self.ax[5].get_xticklabels(), fontsize=xyfontsize)
         plt.setp(self.ax[5].get_yticklabels(), fontsize=xyfontsize)
-
 
         # Plot the ATM price or greek (put in legend)
         self.setlegend()
@@ -726,13 +728,11 @@ where
         if current_T != 0:
             self.ax[5].set_ylim([min(self.vegas)  - 0.1*max(self.vegas),  max(self.vegas)  + 0.1*max(self.vegas)])
 
-
         # Plot the ATM price or greek (put in legend)
         self.setlegend()
 
         # Update plot
         self.update()
-
 
 
     def update(self):
@@ -745,5 +745,5 @@ where
 
 if __name__ == "__main__":    
     root = tk.Tk()
-    gui = Window(root)
-    gui.root.mainloop()
+    Gui = Window(root)
+    Gui.root.mainloop()

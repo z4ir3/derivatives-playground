@@ -1,18 +1,14 @@
 '''
 Interactive Black-Scholes prices and greeks plot using sliders.
 Change the option parameters in the __main__ at the bottom. 
-@author: leonardorocchi
+Copyright (c) @author: leonardorocchi
 '''
-
-
 
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 from functions.blackscholes import BSOption
 plt.style.use("seaborn-dark")
-
-
 
 
 def interactive_option_plot(IVal):
@@ -166,13 +162,11 @@ def interactive_option_plot(IVal):
         fig.canvas.draw()
 
 
-
     # Calling the updateplot change for slider movements
     slider_T.on_changed(updateplot)
     slider_r.on_changed(updateplot)
     slider_v.on_changed(updateplot)
-  
-  
+    
     # First plot (the one that will be updated as soon as sliders are touched)  
     p0, = ax[0].plot(IVal["Sset"], prices,  color="tab:blue")
     p1, = ax[1].plot(IVal["Sset"], lambdas, color="chocolate")
@@ -221,10 +215,6 @@ def interactive_option_plot(IVal):
 
 
 
-
-
-
-
 if __name__ == "__main__":
 
     # Dictionary of initial values 
@@ -262,7 +252,6 @@ if __name__ == "__main__":
     IVal["vstp"]    = 1         # (implied) volatility slider step value (percentage)
 
     # -------------------------------------------------------------------------
-
 
     # Calling the interactive plot routine    
     option = interactive_option_plot(IVal)

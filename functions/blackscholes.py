@@ -267,8 +267,3 @@ class BSOption:
                 "Gamma" : np.round( BSOption.gamma(self),  2),
                 "Theta" : np.round( BSOption.theta(self),  2),
                 "Vega"  : np.round( BSOption.vega(self) ,  2)}
-
-
-
-
-# end scriptfile
