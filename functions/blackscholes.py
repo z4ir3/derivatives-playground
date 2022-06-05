@@ -5,7 +5,7 @@ from scipy.stats import norm
 
 class BSOption:
     
-    def __init__(self, CP, S, K, T, r, sigma, q = 0):
+    def __init__(self, CP, S, K, T, r, v, q = 0):
         '''
         - CP    : either "C" (Call) or "P" (Put)
         - S     : underlying Price 
@@ -15,90 +15,120 @@ class BSOption:
         - sigma : implied volatility
         - q     : dividend yield
         '''
-        self.CP    = BSOption.valid_option(CP)
-        self.S     = BSOption.valid_underlying(S)    
-        self.K     = BSOption.valid_strike(K)
-        self.T     = BSOption.valid_maturity(T)
-        self.r     = r 
-        self.sigma = BSOption.valid_vola(sigma)
-        self.q     = BSOption.valid_yield(q)
+        self.CP = BSOption.valid_option(CP)
+        self.S  = BSOption.valid_underlying(S)    
+        self.K  = BSOption.valid_strike(K)
+        self.T  = BSOption.valid_maturity(T)
+        self.r  = BSOption.valid_intrate(r)
+        self.v  = BSOption.valid_vola(v)
+        self.q  = BSOption.valid_yield(q)
     
     @staticmethod 
     def valid_option(CP):
-        if CP == "C" or CP == "P":
+        '''
+        Validate input option type
+        '''
+        if CP in ["C","P"]:
             return CP
         else:
-            raise ValueError("First argument 'CP' must be either 'C' or 'P'")
+            raise ValueError("First class argument 'CP' must be either 'C' or 'P'")
             
     @staticmethod 
     def valid_underlying(S):
+        '''
+        Validate input underlying price
+        '''
         if S > 0:
             return S
         else:
-            raise ValueError("Second argument 'S' must be greater than 0")
+            raise ValueError("Second class argument 'S' (underlying price) must be greater than 0")
             
     @staticmethod 
     def valid_strike(K):
+        '''
+        Validate input strike price
+        '''
         if K > 0:
             return K
         else:
-            raise ValueError("Third argument 'K' must be greater than 0")
+            raise ValueError("Third argument 'K' (strike price) must be greater than 0")
     
     @staticmethod 
     def valid_maturity(T):
+        '''
+        Validate input maturity
+        '''
         if T >= 0:
             return T
         else:
-            raise ValueError("Fourth argument 'T' cannot be negative")
-            
+            raise ValueError("Fourth argument 'T' (maturity) cannot be negative")
+
+    @staticmethod 
+    def valid_intrate(r):
+        '''
+        Validate input interest rate
+        '''
+        if r >= 0:
+            return r
+        else:
+            raise ValueError("Fifth argument 'r' (interest rate) cannot be negative")
+
     @staticmethod 
     def valid_vola(sigma):
+        '''
+        Validate input volatility
+        '''
         if sigma > 0:
             return sigma
         else:
-            raise ValueError("Sixth argument 'sigma' must be greater than 0")
+            raise ValueError("Sixth argument 'sigma' (volatility) must be greater than 0")
     
     @staticmethod 
     def valid_yield(q):
+        '''
+        Validate input dividend yield
+        '''
         if q >= 0:
             return q
         else:
-            raise ValueError("Seventh argument 'q' cannot be negative")
+            raise ValueError("Seventh argument 'q' (dividend yield) cannot be negative")
        
-    
     @property
     def params(self):
-        return {"Type"  : self.CP,
+        '''
+        Returns all input option parameters
+        '''
+        return {"type"  : self.CP,
                 "S"     : self.S, 
                 "K"     : self.K, 
                 "T"     : self.T,
                 "r"     : self.r,
-                "sigma" : self.sigma,
+                "sigma" : self.v,
                 "q"     : self.q}
      
-    
     @staticmethod
     def N(x, cum=1):
         '''
         Standard Normal CDF or PDF evaluated at the input point x.
         '''  
         if cum:
-            # Returns the CDF
+            # Returns the standard normal CDF
             return norm.cdf(x, loc=0, scale=1)
         else:
+            # Returns the standard normal PDF
             return norm.pdf(x, loc=0, scale=1)
 
-    
-
     def d1(self):
-        return ( np.log(self.S / self.K) + (self.r - self.q + 0.5*self.sigma**2)*self.T ) / (self.sigma * np.sqrt(self.T))
+        '''
+        Computte the quantity d1 of Black-Scholes option pricing
+        '''
+        return ( np.log(self.S / self.K) + (self.r - self.q + 0.5*self.v**2)*self.T ) / (self.v * np.sqrt(self.T))
         
-    
-    
     def d2(self):
-        return self.d1() - self.sigma * np.sqrt(self.T)
-    
-    
+        '''
+        Computte the quantity d2 of Black-Scholes option pricing
+        '''
+        return self.d1() - self.v * np.sqrt(self.T)
     
     def price(self):
         '''
@@ -125,9 +155,7 @@ class BSOption:
             else:
                 # The Put has expired
                 return max(self.K - self.S, 0)
-        
-    
-    
+      
     def delta(self):
         '''
         Black-Scholes pricing model - Delta
@@ -157,26 +185,25 @@ class BSOption:
                     return -1
                 else:             
                     return 0
-                
-                
-             
+
     def Lambda(self):
         '''
-        Black-Scholes pricing model - Labda
+        Black-Scholes pricing model - Lambda
         '''
         if self.CP == "C":
+            # Call option
             if self.delta() < 1e-10 or self.price() < 1e-10:
                 return +np.inf
             else:
                 return self.delta() * self.S / self.price()
+        
         else:
+            # Put option 
             if self.delta() > -1e-10 or self.price() < 1e-10:
                 return -np.inf
             else:
                 return self.delta() * self.S / self.price()
-
-                
-                
+                     
     def gamma(self):
         '''
         Black-Scholes pricing model - Gamma 
@@ -184,13 +211,11 @@ class BSOption:
         # Gamma is the same for both Call and Put            
         if self.T > 0:
             # The Option has not expired yet
-            return + np.exp(-self.q*self.T) * self.N(self.d1(), cum=0) / (self.S * self.sigma * np.sqrt(self.T))
+            return + np.exp(-self.q*self.T) * self.N(self.d1(), cum=0) / (self.S * self.v * np.sqrt(self.T))
             
         else:
             # The Option has expired
             return 0
-    
-    
     
     def theta(self):
         '''
@@ -200,9 +225,9 @@ class BSOption:
             # Call Option
             if self.T > 0:
                 # The Call has not expired yet
-                return - np.exp(-self.q*self.T) * self.S * self.sigma * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
-                        + self.q*np.exp(-self.q*self.T) * self.S * self.N(self.d1())   \
-                        - self.r*np.exp(-self.r*self.T) * self.K * self.N(self.d2())
+                return - np.exp(-self.q*self.T) * self.S * self.v * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
+                       + self.q*np.exp(-self.q*self.T) * self.S * self.N(self.d1())   \
+                       - self.r*np.exp(-self.r*self.T) * self.K * self.N(self.d2())
             
             else:
                 # The Call has expired
@@ -212,16 +237,14 @@ class BSOption:
             # Put Option
             if self.T > 0:
                 # The Put has not expired yet
-                return - np.exp(-self.q*self.T) * self.S * self.sigma * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
-                        - self.q*np.exp(-self.q*self.T) * self.S * (1 - self.N(self.d1()))   \
-                        + self.r*np.exp(-self.r*self.T) * self.K * (1 - self.N(self.d2()))
+                return - np.exp(-self.q*self.T) * self.S * self.v * self.N(self.d1(), cum=0) / (2*np.sqrt(self.T)) \
+                       - self.q*np.exp(-self.q*self.T) * self.S * (1 - self.N(self.d1()))   \
+                       + self.r*np.exp(-self.r*self.T) * self.K * (1 - self.N(self.d2()))
                        
             else:
                 # The Put has expired
                 return 0
 
-    
-    
     def vega(self):
         '''
         Black-Scholes pricing model - Vega 
@@ -234,9 +257,7 @@ class BSOption:
         else:
             # The Option has expired
             return 0          
-        
             
-        
     def greeks(self):
         '''
         Black-Scholes pricing model - All greeks
