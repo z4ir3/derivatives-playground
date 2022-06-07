@@ -9,7 +9,7 @@ Plain vanilla **Call** and **Put** options. Use the sliders to interactively upd
 ### Structure
 
   * Main file *main_gui_bs.py*
-  * GUI class in *src/guisliers.py*
+  * GUI class in *src/guisliders.py*
   * Black-Scholes option pricing model class in *models/blackscholes.py* 
 
 Please follow links below for further details about option pricing:
