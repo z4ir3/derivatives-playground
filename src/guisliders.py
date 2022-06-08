@@ -583,7 +583,7 @@ where
         ycol = "k"
         self.ax[0].set_ylabel("Price (USD)", fontsize=yfontsize, color=ycol)
         self.ax[1].set_ylabel("Lambda", fontsize=yfontsize, color=ycol)
-        self.ax[2].set_ylabel("Delta (%)", fontsize=yfontsize, color=ycol)
+        self.ax[2].set_ylabel("Delta", fontsize=yfontsize, color=ycol)
         self.ax[3].set_ylabel("Gamma (%)", fontsize=yfontsize, color=ycol)
         self.ax[4].set_ylabel("Theta", fontsize=yfontsize, color=ycol)
         self.ax[5].set_ylabel("Vega", fontsize=yfontsize, color=ycol)
