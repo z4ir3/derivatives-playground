@@ -11,13 +11,13 @@ class BSOption:
     
     def __init__(self, CP, S, K, T, r, v, q = 0):
         '''
-        - CP    : either "C" (Call) or "P" (Put)
-        - S     : underlying Price 
-        - K     : strike Price
-        - r     : risk-free interest rate
-        - T     : time-to-maturity in years 
-        - sigma : implied volatility
-        - q     : dividend yield
+        - CP : either "C" (Call) or "P" (Put)
+        - S  : underlying Price 
+        - K  : strike Price
+        - r  : risk-free interest rate
+        - T  : time-to-maturity in years 
+        - v  : implied volatility
+        - q  : dividend yield
         '''
         self.CP = BSOption.valid_option(CP)
         self.S  = BSOption.valid_underlying(S)    
@@ -78,14 +78,14 @@ class BSOption:
             raise ValueError("Fifth argument 'r' (interest rate) cannot be negative")
 
     @staticmethod 
-    def valid_vola(sigma):
+    def valid_vola(v):
         '''
         Validate input volatility
         '''
-        if sigma > 0:
-            return sigma
+        if v > 0:
+            return v
         else:
-            raise ValueError("Sixth argument 'sigma' (volatility) must be greater than 0")
+            raise ValueError("Sixth argument 'v' (volatility) must be greater than 0")
     
     @staticmethod 
     def valid_yield(q):
@@ -102,13 +102,13 @@ class BSOption:
         '''
         Returns all input option parameters
         '''
-        return {"type"  : self.CP,
-                "S"     : self.S, 
-                "K"     : self.K, 
-                "T"     : self.T,
-                "r"     : self.r,
-                "sigma" : self.v,
-                "q"     : self.q}
+        return {"type" : self.CP,
+                "S"    : self.S, 
+                "K"    : self.K, 
+                "T"    : self.T,
+                "r"    : self.r,
+                "v"    : self.v,
+                "q"    : self.q}
      
     @staticmethod
     def N(x, cum=1):
@@ -143,7 +143,7 @@ class BSOption:
             if self.T > 0:
                 # The Call has not expired yet
                 return + self.S * np.exp(-self.q*self.T) * self.N(self.d1())  \
-                        - self.K * np.exp(-self.r*self.T) * self.N(self.d2())
+                       - self.K * np.exp(-self.r*self.T) * self.N(self.d2())
                        
             else:
                 # The Call has expired
@@ -154,7 +154,7 @@ class BSOption:
             if self.T > 0:
                 # The Put has not expired yet
                 return - self.S * np.exp(-self.q*self.T) * self.N(-self.d1())  \
-                        + self.K * np.exp(-self.r*self.T) * self.N(-self.d2())
+                       + self.K * np.exp(-self.r*self.T) * self.N(-self.d2())
                        
             else:
                 # The Put has expired
