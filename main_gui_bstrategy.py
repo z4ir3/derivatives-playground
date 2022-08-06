@@ -1,4 +1,7 @@
 '''
+Interactive Option strategy payoff calculator GUI
+Options priced with with the Black-Scholes model 
+The GUI is built with tkinter and uses matplotlib sliders
 Copyright (c) @author: leonardorocchi
 '''
 
