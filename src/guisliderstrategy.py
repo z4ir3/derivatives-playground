@@ -30,7 +30,7 @@ class PlotGUI:
         self.root.title("Option strategy payoff calculator") 
         
         # self.root.geometry( str(self.root.winfo_screenwidth()-5) + "x" + str(self.root.winfo_screenheight()-5) )
-        self.root.geometry("1425x820")#820")
+        self.root.geometry("1425x825")#820")
         
         # Main background color
         self.mainbg       = "#E0DFDF"
@@ -57,7 +57,7 @@ class PlotGUI:
 
         # Left frame 'Text' Title setup
         self.title_relif = "flat"   #"raised", #"flat"
-        self.title_font  = (self.guifont, 16, "bold")
+        self.title_font  = (self.guifont, 20, "bold")
 
         # Left frame 'Label' setup
         self.lab_relief = "flat"  #"raised", #"flat"
@@ -99,7 +99,7 @@ class PlotGUI:
         self.right_relheight    = self.left_relheight
 
         # tk Text widget default width (title and descriptions)
-        self.deftextwidth = 80
+        self.deftextwidth = 60
 
         # Padx and Pady (top pady, bottom pady)
         self.padx               = (25,0)
@@ -214,7 +214,7 @@ class PlotGUI:
         self.gridrow = 1
 
         # Label "Initial Data"
-        self.label_idata = self.create_tklabel(labeltext = "Initial Data")
+        self.label_idata = self.create_tklabel(labeltext = "Initial Data:")
         self.config_tklabel(self.label_idata, labelpady = self.first_row_padys)
 
         self.gridcol = self.gridcol + 1
@@ -282,7 +282,7 @@ class PlotGUI:
 
         # Label "choose strategy"
         self.label_strat = self.create_tklabel(labelfont = (self.lab_font[0], self.lab_font[1], "bold"),
-                                                labelwidth = 14, 
+                                                labelwidth = 16, 
                                                 labeltext = self.choose_strat_label_name)
         self.config_tklabel(self.label_strat, labelpady = self.second_row_padys) 
 
@@ -508,7 +508,9 @@ class PlotGUI:
         '''
         # Insert the main "Calculate" button to calculate strategies payoffs
         # This button will appear by default and stays fixed        
-        self.calculatebutton = self.create_tkbutton(buttoncmd = self.compute_strategy, buttontext=self.calculate_button_name)
+        self.calculatebutton = self.create_tkbutton(buttoncmd  = self.compute_strategy, 
+                                                    buttontext = self.calculate_button_name,
+                                                    buttonfont = (self.guifont,13,"bold"))
         self.config_tkbutton(self.calculatebutton, 
                              buttonrow = self.defcontrolrow, 
                              buttoncol = 4, 
@@ -1184,7 +1186,7 @@ class PlotGUI:
             costmsg = "Cost of the entering this strategy: " 
             costmsg = costmsg + "Pay $" if self.StratData["Cost"] > 0 else costmsg + "Receive $"
             costmsg = costmsg + "{:.0f}".format( abs(self.StratData["Cost"]) )
-            
+        
             # Show the cost on the GUI
             self.labcost = self.create_tklabel(labeltext = costmsg)
             self.config_tklabel(self.labcost, 
@@ -1603,7 +1605,8 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
                         relief  = self.lab_relief,
                         bg      = self.lab_bg,
                         height  = self.lab_height,
-                        font    = labelfont if labelfont is not None else self.lab_font)
+                        font    = labelfont if labelfont is not None else self.lab_font,
+                        anchor  = "w")
 
 
     def config_tklabel(self,
@@ -1737,18 +1740,20 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
 
 
     def create_tktext(self, 
-                        textfont = None, 
+                        textfont   = None, 
                         textheight = 2, 
-                        textwidth = 85):
+                        textwidth  = 85,
+                        texthlth   = None):
         '''
         Create a tkinter Label
         '''
-        return tk.Text(master   = self.framel, 
-                        height  = textheight,
-                        width   = textwidth, 
-                        relief  = self.lab_relief,
-                        bg      = self.lab_bg,
-                        font    = textfont if textfont is not None else self.title_font)
+        return tk.Text(master               = self.framel, 
+                        height              = textheight,
+                        width               = textwidth, 
+                        relief              = self.lab_relief,
+                        bg                  = self.lab_bg,
+                        highlightthickness  = texthlth if texthlth is not None else 0,
+                        font                = textfont if textfont is not None else self.title_font)
 
 
     def config_tktext(self,
