@@ -30,7 +30,7 @@ class PlotGUI:
         self.root.title("Option strategy payoff calculator") 
         
         # self.root.geometry( str(self.root.winfo_screenwidth()-5) + "x" + str(self.root.winfo_screenheight()-5) )
-        self.root.geometry("1425x700")#820")
+        self.root.geometry("1425x820")#820")
         
         # Main background color
         self.mainbg       = "#E0DFDF"
@@ -38,16 +38,33 @@ class PlotGUI:
         self.rframefigbg  = "whitesmoke"
         self.root.configure(bg=self.mainbg)
 
+        # Main font of the GUI
+        self.guifont = "Helvetica Neue"
+        # self.guifont = "Tahoma"
+        # self.guifont = "Adelle Sans Devanagari"
+        # self.guifont = "Trebuchet MS"
+        # self.guifont = "Verdana"
+        # self.guifont = "PT Sans Caption"
+        # self.guifont = "Monaco"
+        # self.guifont = "Microsoft Sans Serif"
+        # self.guifont = "Lucida Grande"
+        # self.guifont = "Osaka"
+        # self.guifont = "October Tamil"
+        # self.guifont = "Al Nile"
+        # self.guifont = "Al Tarikh"
+
+
+
         # Left frame 'Text' Title setup
-        self.title_relif = "raised", #"flat"
-        self.title_font  = ("Helvetica Neue", 16, "bold")
+        self.title_relif = "flat"   #"raised", #"flat"
+        self.title_font  = (self.guifont, 16, "bold")
 
         # Left frame 'Label' setup
-        self.lab_relief = "raised", #"flat"
+        self.lab_relief = "flat"  #"raised", #"flat"
         self.lab_width  = 13
         self.lab_height = 1
         self.lab_bg     = self.mainbg
-        self.lab_font   = ("Helvetica Neue", 14, "normal")
+        self.lab_font   = (self.guifont, 14, "normal")
 
         # Left frame 'Entry' setup
         self.ent_htick  = 2, 
@@ -174,7 +191,7 @@ class PlotGUI:
     
         # Create the left frame and place it in the GUI
         self.framel = tk.Frame(master = self.root, 
-                                relief      = "raised", #"flat", 
+                                relief      = "flat", #raised", #"flat", 
                                 bg          = self.mainbg, 
                                 borderwidth = 1)
 
@@ -1204,7 +1221,7 @@ class PlotGUI:
                                             labl = "Time to Maturity (years)", 
                                             vmin = 0, 
                                             vmax = self.T, 
-                                            vstp = 0.001, 
+                                            vstp = 0.00274, 
                                             vini = self.T)
 
         # Recover the volatilities inserted for each option in the strategy
@@ -1284,9 +1301,9 @@ class PlotGUI:
         # self.ax[1].set_ylabel("Payoff (USD)", fontsize=yfontsize, color=ycol)
        
         # Set titles
-        titfontsize = 12
-        self.ax[0].set_title("Options payoffs at maturity", fontsize=titfontsize)
-        self.ax[1].set_title("Total strategy payoff", fontsize=titfontsize)
+        self.titplotfontsize = 12
+        self.ax[0].set_title("Options payoffs at maturity", fontsize=self.titplotfontsize)
+        self.ax[1].set_title("Total strategy payoff", fontsize=self.titplotfontsize)
 
         # Set grids
         self.ax[0].grid()    
@@ -1370,6 +1387,9 @@ class PlotGUI:
             self.pff.set_ydata(self.StrategySlider.payoffs.values)
 
         self.pffmat.set_ydata(self.Strategy.payoffs_exp.values)
+
+        # Update title 
+        self.ax[1].set_title("Total strategy payoff ({:.0f} days(s) left)".format(current_T*365), fontsize=self.titplotfontsize)
 
 
         # Set new axis 
@@ -1500,7 +1520,7 @@ Unlike Top Straps, this strategy requires an initial investment.'''
 and one Put with the same strike price.
 You hope there wont' be a big underlying price move and you are not sure in which direction the move will be.
 It is a kind of a symmetric Top Strip (or Strap).
-Unlike Bottom Straddlse, this strategy provides an initial positive up-front cash inflow.'''
+Unlike Bottom Straddles, this strategy provides an initial positive up-front cash inflow.'''
 
         elif self.chosen_strategy == "Bottom Straddle":
             nrows = 4
