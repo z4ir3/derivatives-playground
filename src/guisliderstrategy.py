@@ -1,20 +1,22 @@
 '''
+GUI BS Strategy class
+Interactive Option Strategy payoff calculator using Black-Scholes option pricing model 
 Copyright (c) @author: leonardorocchi
 '''
 
-from posixpath import supports_unicode_filenames
-from anyio import typed_attribute
 import numpy as np
 import tkinter as tk
-#from tkinter import messagebox
-from PIL import ImageTk, Image
+# from posixpath import supports_unicode_filenames
+# from anyio import typed_attribute
+# from PIL import ImageTk, Image
+import matplotlib.pyplot as plt
 from matplotlib.axis import Axis
 from matplotlib.widgets import Slider
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from models.blackscholestrategy import BSOptStrat
 
-import matplotlib.pyplot as plt
+# Seaborn style plot
 plt.style.use("seaborn-dark")
 
 
@@ -53,14 +55,12 @@ class PlotGUI:
         # self.guifont = "Al Nile"
         # self.guifont = "Al Tarikh"
 
-
-
         # Left frame 'Text' Title setup
-        self.title_relif = "flat"   #"raised", #"flat"
+        self.title_relif = "flat"   #"raised"
         self.title_font  = (self.guifont, 20, "bold")
 
         # Left frame 'Label' setup
-        self.lab_relief = "flat"  #"raised", #"flat"
+        self.lab_relief = "flat"  #"raised"
         self.lab_width  = 13
         self.lab_height = 1
         self.lab_bg     = self.mainbg
@@ -191,7 +191,7 @@ class PlotGUI:
     
         # Create the left frame and place it in the GUI
         self.framel = tk.Frame(master = self.root, 
-                                relief      = "flat", #raised", #"flat", 
+                                relief      = "flat", #raised" 
                                 bg          = self.mainbg, 
                                 borderwidth = 1)
 
@@ -1209,12 +1209,6 @@ class PlotGUI:
             Axis.remove(self.slider_dv_ax)
             delattr(self, "slider_dv_ax")
             delattr(self, "slider_dv")
-
-
-
-
-            print(f"EXECTUED AXIS TRY {self.chosen_strategy}")
-
         except:        
             pass
 
@@ -1257,80 +1251,15 @@ class PlotGUI:
         '''
         Plot of option strategies' payoffs
         '''
-
-        # ORIGINAL
-        # try:
-        #     for axn in range(len(self.ax)):
-        #         self.ax[axn].clear()
-            
-        # except:
-        #     self.ax = self.fig.subplots(2,1)
-        #     self.ax = self.ax.flatten()
-            
-
-
-
-        # # Clear current axis 
-        # try:
-        #     print(self.ax)
-            
-        #     for axn in range(len(self.ax)):
-        #         self.ax[axn].clear()
-            
-            
-            
-        #     print(self.ax)
-
-            
-            
-        #     xx = np.linspace(80,100,100)
-        #     yy = 2 * xx ** 2
-        #     try:
-        #         self.ax[1].plot(xx,yy)
-        #     except:
-        #         print("PORCODIO")
-        #     else:
-        #         self.ax[1].plot(xx,yy)
-        #         print("PORCALAMADONNA")
-        #         return
-        #     print(f"EXECTUED TRY con {self.chosen_strategy}")
-
-        # except:
-        #     self.ax = self.fig.subplots(2,1)
-        #     self.ax = self.ax.flatten()
-        #     print(f"EXECTUED EXCEPT con {self.chosen_strategy}")
-            
-
-
-
+        # Clear current axis 
         try:
-            print("DENTRO EL TRY")
-            print(self.ax)
             for axn in range(len(self.ax)):
                 self.ax[axn].clear()
-            print("EXECUTED DENTRO EL TRY")
-            print(self.ax)
-
-                    
+            
         except:
             self.ax = self.fig.subplots(2,1)
             self.ax = self.ax.flatten()
-            print(f"EXECTUED EXCEPT con {self.chosen_strategy}")
-            
-        else:
-            print("DENTRO EL ELSE")
-            print(self.ax)
-            for axn in range(len(self.ax)):
-                self.ax[axn].clear()
-            print("EXECUTED DENTRO EL ELSE")
-            print(self.ax)
-            xx = np.linspace(80,120,100)
-            yy = self.T * xx ** 2
-            self.ax[1].plot(xx,yy)
-            # plt.show()
-
-
-
+                    
         # Top plot
         # All options' payoffs of the strategy at payoffot (T=0)
         for n in range(1,self.Strategy.payoffs_exp_df.shape[1]+1):
@@ -1463,16 +1392,7 @@ class PlotGUI:
         # Update title 
         self.ax[1].set_title("Total strategy payoff ({:.0f} days(s) left)".format(current_T*365), fontsize=self.titplotfontsize)
 
-
         # Set new axis 
-
-        # # Price
-        # mx = min(self.StrategySlider.payoffs_exp.index) 
-        # Mx = max(self.StrategySlider.payoffs_exp.index)
-        # my = min(self.StrategySlider.payoffs_exp.values) 
-        # My = max(self.StrategySlider.payoffs_exp.values)
-        # self.ax[1].set_xlim([mx * (1 - 5/100), Mx * (1 + 5/100)])
-        # self.ax[1].set_ylim([my * (1 - 5/100), My * (1 + 5/100)])
         if current_T == 0:
             self.ax[1].set_xlim( self.stratxlim[0], self.stratxlim[1] )
             self.ax[1].set_ylim( self.stratylim[0], self.stratylim[1] )
@@ -1488,16 +1408,12 @@ class PlotGUI:
         self.canvas.draw()
 
 
-
-
     def strategy_description(self):
         '''
         Returns the description of the pre-defined strategy
         '''
-
         Desc = dict()
 
-        # Strategy description
         if self.chosen_strategy == "Long Call":
             nrows = 2
             desc = '''By buying a Call, \
@@ -1653,7 +1569,6 @@ with both strikes of the Bull Spread larger than those of the Bear Spread.
 You hope there will be a big underlying price move and you are not sure in which direction the move will be.
 This is a strategy similar to a Bottom Strangle even though profits are limited.
 Unlike Top Iron Condors, this strategy requires an initial investment.'''   
-
 
         # Save description and number of rows
         Desc["msg"]   = desc
