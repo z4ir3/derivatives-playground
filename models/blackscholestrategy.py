@@ -1,4 +1,5 @@
 '''
+Black-Scholes option pricing class
 Copyright (c) @author: leonardorocchi
 '''
 
@@ -489,11 +490,13 @@ class BSOptStrat:
         '''
         return self.payoffs_exp_df
 
+
     def get_payoffs(self):
         '''
         Returns the current strategy payoff
         '''
         return self.payoffs
+
     
     def get_payoffs_exp(self):
         '''
