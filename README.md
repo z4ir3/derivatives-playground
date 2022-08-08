@@ -20,6 +20,8 @@ Please follow the links below for further details about option pricing:
   * Derivation of the [Black-Scholes option pricing model](http://leonardorocchi.info/topics-pages/qfin/black-scholes-option-pricing-model/bs-option-pricing-model.html)
 
 
+
+
 **Second GUI**: option strategy payoff calculator and plot using python **tkinter** library.
 
 <img src="/data/images/gui-strategy-screenshot.png" height="500" width="800">
