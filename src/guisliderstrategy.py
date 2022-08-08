@@ -1083,7 +1083,7 @@ class PlotGUI:
             
 
         # Create the StratData dictionary with inserted options and the total strategy price 
-        self.StratData = self.Strategy.describe_strategy() #self.chosen_strategy)
+        self.StratData = self.Strategy.describe_strategy()
 
         # Once the startegy option has been created 
         # - if the strategy was the custom one, then the prices of single option should be put on the GUI
@@ -1144,13 +1144,11 @@ class PlotGUI:
             # Strategy description text 
             self.stratdesc = self.strategy_description()
             self.predefopt_desc = self.create_tktext(textheight = self.stratdesc["nrows"], 
-                                                    textwidth = self.deftextwidth,
-                                                    textfont  = self.lab_font)
+                                                     textwidth = self.deftextwidth,
+                                                     textfont  = self.lab_font)
             self.config_tktext(self.predefopt_desc, 
                                 textmsg     = self.stratdesc["msg"], 
                                 textrow     = self.gridrow, 
-                                #textcol     = 0, 
-                                #textcolspan = 5, 
                                 textpady    = (20,0))
 
             # Show all options data of the pre-defined selected strategy 
@@ -1190,10 +1188,10 @@ class PlotGUI:
             # Show the cost on the GUI
             self.labcost = self.create_tklabel(labeltext = costmsg)
             self.config_tklabel(self.labcost, 
-                                labelrow = self.gridrow, 
-                                labelcol = 0, 
-                                labelcolspan = 5,
-                                labelpady = (20,0))
+                                labelrow        = self.gridrow, 
+                                labelcol        = 0, 
+                                labelcolspan    = 5,
+                                labelpady       = (20,0))
 
 
         # Check if sliders are already in the right frame plot window
@@ -1211,6 +1209,12 @@ class PlotGUI:
             Axis.remove(self.slider_dv_ax)
             delattr(self, "slider_dv_ax")
             delattr(self, "slider_dv")
+
+
+
+
+            print(f"EXECTUED AXIS TRY {self.chosen_strategy}")
+
         except:        
             pass
 
@@ -1253,14 +1257,79 @@ class PlotGUI:
         '''
         Plot of option strategies' payoffs
         '''
-        # Clear current axis 
+
+        # ORIGINAL
+        # try:
+        #     for axn in range(len(self.ax)):
+        #         self.ax[axn].clear()
+            
+        # except:
+        #     self.ax = self.fig.subplots(2,1)
+        #     self.ax = self.ax.flatten()
+            
+
+
+
+        # # Clear current axis 
+        # try:
+        #     print(self.ax)
+            
+        #     for axn in range(len(self.ax)):
+        #         self.ax[axn].clear()
+            
+            
+            
+        #     print(self.ax)
+
+            
+            
+        #     xx = np.linspace(80,100,100)
+        #     yy = 2 * xx ** 2
+        #     try:
+        #         self.ax[1].plot(xx,yy)
+        #     except:
+        #         print("PORCODIO")
+        #     else:
+        #         self.ax[1].plot(xx,yy)
+        #         print("PORCALAMADONNA")
+        #         return
+        #     print(f"EXECTUED TRY con {self.chosen_strategy}")
+
+        # except:
+        #     self.ax = self.fig.subplots(2,1)
+        #     self.ax = self.ax.flatten()
+        #     print(f"EXECTUED EXCEPT con {self.chosen_strategy}")
+            
+
+
+
         try:
+            print("DENTRO EL TRY")
+            print(self.ax)
             for axn in range(len(self.ax)):
                 self.ax[axn].clear()
+            print("EXECUTED DENTRO EL TRY")
+            print(self.ax)
 
+                    
         except:
             self.ax = self.fig.subplots(2,1)
             self.ax = self.ax.flatten()
+            print(f"EXECTUED EXCEPT con {self.chosen_strategy}")
+            
+        else:
+            print("DENTRO EL ELSE")
+            print(self.ax)
+            for axn in range(len(self.ax)):
+                self.ax[axn].clear()
+            print("EXECUTED DENTRO EL ELSE")
+            print(self.ax)
+            xx = np.linspace(80,120,100)
+            yy = self.T * xx ** 2
+            self.ax[1].plot(xx,yy)
+            # plt.show()
+
+
 
         # Top plot
         # All options' payoffs of the strategy at payoffot (T=0)
@@ -1271,6 +1340,7 @@ class PlotGUI:
                             label = "Option {}".format(n))
         
         # Bottom plot
+        print(self.Strategy.payoffs.values[40:60])
         # Current payoff as soon as the strategy is initiated (the plot that changes when slider values are changed)
         self.pff, = self.ax[1].plot(self.Strategy.payoffs.index, 
                                     self.Strategy.payoffs.values, 
