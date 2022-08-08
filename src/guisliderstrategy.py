@@ -1160,7 +1160,7 @@ class PlotGUI:
                 stratdesc = "({}) {:.0f} {} {}".format(nopt, 
                                                        abs(self.StratData[o]["NP"]),
                                                        "Long" if self.StratData[o]["NP"] >= 0 else "Short", 
-                                                       "Call"  if self.StratData[o]["CP"] == "C" else "Put")
+                                                       "Call" if self.StratData[o]["CP"] == "C" else "Put")
 
                 stratdesc = stratdesc + "(K = {:.2f}, T = {:.2f}, v = {:.2f})".format(self.StratData[o]["K"], 
                                                                                       self.StratData[o]["T"], 
@@ -1269,7 +1269,6 @@ class PlotGUI:
                             label = "Option {}".format(n))
         
         # Bottom plot
-        print(self.Strategy.payoffs.values[40:60])
         # Current payoff as soon as the strategy is initiated (the plot that changes when slider values are changed)
         self.pff, = self.ax[1].plot(self.Strategy.payoffs.index, 
                                     self.Strategy.payoffs.values, 
