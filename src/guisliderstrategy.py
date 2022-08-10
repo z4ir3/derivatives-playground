@@ -1389,7 +1389,7 @@ class PlotGUI:
         self.pffmat.set_ydata(self.Strategy.payoffs_exp.values)
 
         # Update title 
-        self.ax[1].set_title("Total strategy payoff ({:.0f} days(s) left)".format(current_T*365), fontsize=self.titplotfontsize)
+        self.ax[1].set_title("Total strategy payoff ({:.0f} days left)".format(current_T*365), fontsize=self.titplotfontsize)
 
         # Set new axis 
         if current_T == 0:
