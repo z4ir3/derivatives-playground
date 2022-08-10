@@ -6,18 +6,11 @@ Copyright (c) @author: leonardorocchi
 
 import numpy as np
 import tkinter as tk
-# from posixpath import supports_unicode_filenames
-# from anyio import typed_attribute
-# from PIL import ImageTk, Image
 import matplotlib.pyplot as plt
 from matplotlib.axis import Axis
 from matplotlib.widgets import Slider
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 from models.blackscholestrategy import BSOptStrat
-
-# Seaborn style plot
-plt.style.use("seaborn-dark")
 
 
 class PlotGUI:
@@ -32,13 +25,10 @@ class PlotGUI:
         self.root.title("Option strategy payoff calculator") 
         
         # self.root.geometry( str(self.root.winfo_screenwidth()-5) + "x" + str(self.root.winfo_screenheight()-5) )
-        self.root.geometry("1425x825")#820")
+        self.root.geometry("1425x825")
         
-        # Main background color
-        self.mainbg       = "#E0DFDF"
-        self.rframeplotbg = "#80c1ff"
-        self.rframefigbg  = "whitesmoke"
-        self.root.configure(bg=self.mainbg)
+        # Color palette: "light" or "dark"
+        self.definepalette("light")
 
         # Main font of the GUI
         self.guifont = "Helvetica Neue"
@@ -63,7 +53,6 @@ class PlotGUI:
         self.lab_relief = "flat"  #"raised"
         self.lab_width  = 13
         self.lab_height = 1
-        self.lab_bg     = self.mainbg
         self.lab_font   = (self.guifont, 14, "normal")
 
         # Left frame 'Entry' setup
@@ -71,7 +60,6 @@ class PlotGUI:
         self.ent_bordw  = 0
         self.ent_width  = 10
         self.ent_font   = ("Helvetica Neue", 14, "normal")
-        self.ent_bg     = "whitesmoke"    
 
         # Location of the frames for a symmetric frame layout
         
@@ -192,7 +180,7 @@ class PlotGUI:
         # Create the left frame and place it in the GUI
         self.framel = tk.Frame(master = self.root, 
                                 relief      = "flat", #raised" 
-                                bg          = self.mainbg, 
+                                bg          = self.lframebg, 
                                 borderwidth = 1)
 
         self.framel.place(relx = self.left_relx, 
@@ -207,9 +195,9 @@ class PlotGUI:
         # Label "Title" of the frame
         self.titleframe = self.create_tktext(textheight = 1, textwidth = self.deftextwidth)
         self.config_tktext(self.titleframe, 
-                        textmsg  = self.title_lframe, 
-                        textrow  = self.gridrow, 
-                        textpady = (20,0))
+                            textmsg  = self.title_lframe, 
+                            textrow  = self.gridrow, 
+                            textpady = (20,0))
 
         self.gridrow = 1
 
@@ -321,9 +309,9 @@ class PlotGUI:
         # Subplot spaces
         plt.subplots_adjust(left   = 0.12,
                             right  = 0.96,
-                            top    = 0.94,
+                            top    = 0.96,
                             bottom = 0.16,
-                            hspace = 0.3,
+                            hspace = 0.27,
                             wspace = 0.3)
             
         # Setup the plot into the GUI
@@ -471,8 +459,8 @@ class PlotGUI:
                     valmax    = vmax, 
                     valstep   = vstp, 
                     valinit   = vini,
-                    color     = "gray",
-                    initcolor = "gray")
+                    color     = self.sliderplot,
+                    initcolor = self.sliderplot)
 
 
     def get_selected_strategy(self, selection):
@@ -1223,6 +1211,8 @@ class PlotGUI:
                                             vmax = self.T, 
                                             vstp = 0.00274, 
                                             vini = self.T)
+        self.slider_T.label.set_color(self.sliderlabfg)
+        self.slider_T.valtext.set_color(self.sliderlabfg)
 
         # Recover the volatilities inserted for each option in the strategy
         # They are needed to define the min. and max. delta volatility in 
@@ -1238,6 +1228,8 @@ class PlotGUI:
                                             vmax = self.maxvola - max(volas), 
                                             vstp = 1, 
                                             vini = 0)
+        self.slider_dv.label.set_color(self.sliderlabfg)
+        self.slider_dv.valtext.set_color(self.sliderlabfg)
 
         # Plot option strategy payoff
         self.plot_strat_payoff()
@@ -1291,19 +1283,18 @@ class PlotGUI:
 
         # Set x-labels
         xfontsize = 9
-        # self.ax[1].set_xlabel("Underlying $S$ (Current={:.2f})".format(self.S), fontsize=xfontsize)
-        self.ax[1].set_xlabel("Underlying $S$", fontsize=xfontsize)
+        self.ax[1].set_xlabel("Underlying $S$", fontsize=xfontsize, color=self.labplotfg)
 
         # Set y-labels    
         # yfontsize = 9
         # ycol = "k"
-        # self.ax[0].set_ylabel("Payoff (USD)", fontsize=yfontsize, color=ycol)
-        # self.ax[1].set_ylabel("Payoff (USD)", fontsize=yfontsize, color=ycol)
+        # self.ax[0].set_ylabel("Payoff (USD)", fontsize=yfontsize, color=self.labplotfg)
+        # self.ax[1].set_ylabel("Payoff (USD)", fontsize=yfontsize, color=self.labplotfg)
        
         # Set titles
         self.titplotfontsize = 12
-        self.ax[0].set_title("Options payoffs at maturity", fontsize=self.titplotfontsize)
-        self.ax[1].set_title("Total strategy payoff", fontsize=self.titplotfontsize)
+        self.ax[0].set_title("Options payoffs at maturity", fontsize=self.titplotfontsize, color=self.labplotfg)
+        self.ax[1].set_title("Total strategy payoff", fontsize=self.titplotfontsize, color=self.labplotfg)
 
         # Set grids
         self.ax[0].grid()    
@@ -1312,14 +1303,14 @@ class PlotGUI:
         # Legend
         self.ax[0].legend(fontsize=9)
         self.ax[1].legend(fontsize=9)
-
+        
         # Tick labels
         xyfontsize = 8
-        plt.setp(self.ax[0].get_xticklabels(), fontsize=xyfontsize)
-        plt.setp(self.ax[0].get_yticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[0].get_xticklabels(), fontsize=xyfontsize, color=self.labplotfg)
+        plt.setp(self.ax[0].get_yticklabels(), fontsize=xyfontsize, color=self.labplotfg)
 
-        plt.setp(self.ax[1].get_xticklabels(), fontsize=xyfontsize)
-        plt.setp(self.ax[1].get_yticklabels(), fontsize=xyfontsize)
+        plt.setp(self.ax[1].get_xticklabels(), fontsize=xyfontsize, color=self.labplotfg)
+        plt.setp(self.ax[1].get_yticklabels(), fontsize=xyfontsize, color=self.labplotfg)
 
         # Update plot
         self.updateplot()
@@ -1557,8 +1548,7 @@ Unlike Top Butterfly, this strategy provides an initial positive up-front cash i
 and a Bear (Call/Put) Spread, 
 with both strikes of the Bear Spread larger than those of the Bull Spread. 
 You hope there wont' be a big underlying price move and you are not sure in which direction the move will be.
-This is a strategy similar to a Top Strangle but with limited losses.
-Unlike Bottom Iron Condors, this strategy requires an initial investment.'''   
+This is a strategy similar to a Top Strangle but with limited losses.'''   
 
         elif self.chosen_strategy == "Bottom Iron Condor":
             nrows = 5
@@ -1566,8 +1556,7 @@ Unlike Bottom Iron Condors, this strategy requires an initial investment.'''
 and a Bull (Call/Put) Spread, 
 with both strikes of the Bull Spread larger than those of the Bear Spread. 
 You hope there will be a big underlying price move and you are not sure in which direction the move will be.
-This is a strategy similar to a Bottom Strangle even though profits are limited.
-Unlike Top Iron Condors, this strategy requires an initial investment.'''   
+This is a strategy similar to a Bottom Strangle even though profits are limited.'''   
 
         # Save description and number of rows
         Desc["msg"]   = desc
@@ -1587,7 +1576,8 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
                         width   = None if labelwidth is None else labelwidth,  
                         text    = labeltext,
                         relief  = self.lab_relief,
-                        bg      = self.lab_bg,
+                        bg      = self.labelbg,
+                        fg      = self.labelfg,
                         height  = self.lab_height,
                         font    = labelfont if labelfont is not None else self.lab_font,
                         anchor  = "w")
@@ -1633,7 +1623,8 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
         return tk.Entry(master              = self.framel, 
                         width               = self.ent_width, 
                         font                = self.ent_font,
-                        bg                  = self.ent_bg, 
+                        bg                  = self.entrybg, 
+                        fg                  = self.entryfg,
                         highlightthickness  = self.ent_htick, 
                         borderwidth         = self.ent_bordw)
 
@@ -1685,6 +1676,8 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
                         width = 8,  
                         text                = buttontext,
                         font                = buttonfont,
+                        bg                  = self.buttonbg,
+                        fg                  = self.buttonfg,
                         highlightthickness  = buttonhlth if buttonhlth is not None else 0,
                         borderwidth         = buttonbordw if buttonbordw is not None else 0,
                         command             = buttoncmd)
@@ -1735,7 +1728,8 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
                         height              = textheight,
                         width               = textwidth, 
                         relief              = self.lab_relief,
-                        bg                  = self.lab_bg,
+                        bg                  = self.textbg,
+                        fg                  = self.textfg,
                         highlightthickness  = texthlth if texthlth is not None else 0,
                         font                = textfont if textfont is not None else self.title_font)
 
@@ -1762,3 +1756,56 @@ Unlike Top Iron Condors, this strategy requires an initial investment.'''
 
         # Insert the text
         text.insert("end",textmsg)
+
+
+    def definepalette(self, palettetype):
+        '''
+        Set up GUI color palette
+        '''
+        if palettetype == "light":
+            self.mainbg       = "#E0DFDF"
+            self.lframebg     = "whitesmoke"
+
+            self.labelbg      = self.lframebg 
+            self.entrybg      = "white"
+            self.textbg       = self.lframebg 
+            self.buttonbg     = self.mainbg 
+
+            self.labelfg      = "black"
+            self.entryfg      = "black"
+            self.textfg       = "black"
+            self.buttonfg     = "black"
+
+            self.rframeplotbg = "#80c1ff"
+            self.rframefigbg  = "whitesmoke"
+            self.labplotfg    = "black"
+            self.sliderplot   = "gray"
+            self.sliderlabfg  = "black"
+
+            plt.style.use("seaborn-dark")
+            self.root.configure(bg=self.mainbg)
+
+        elif palettetype == "dark":
+            self.mainbg       = "#20222B"
+            self.lframebg     = "#10121A"
+
+            self.labelbg      = self.lframebg 
+            self.entrybg      = "#646773"
+            self.textbg       = self.lframebg 
+            self.buttonbg     = self.mainbg 
+
+            self.labelfg      = "white"
+            self.entryfg      = "white"
+            self.textfg       = "white"
+            self.buttonfg     = self.lframebg
+
+            self.rframeplotbg = self.mainbg 
+            self.rframefigbg  = self.mainbg 
+            self.labplotfg    = "white"
+            self.sliderplot   = "gray"
+            self.sliderlabfg  = "white"
+
+            plt.style.use("seaborn-dark")
+            self.root.configure(bg=self.mainbg)
+        else:
+            raise ValueError("Wrong color palette type name ('light' or 'dark'")
