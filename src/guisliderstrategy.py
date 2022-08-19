@@ -14,10 +14,12 @@ from models.blackscholestrategy import BSOptStrat
 
 
 class PlotGUI:
-    '''
-    GUI for 
-    '''
-    def __init__(self, root):
+
+    def __init__(self, root, colorpalette = "light"):
+        '''
+        root:           tkinter object
+        colorpalette:   GUI color palette. Current "light" or "dark" mode
+        '''
         
         self.root = root  
 
@@ -28,7 +30,7 @@ class PlotGUI:
         self.root.geometry("1425x825")
         
         # Color palette: "light" or "dark"
-        self.definepalette("light")
+        self.definepalette(colorpalette)
 
         # Main font of the GUI
         self.guifont = "Helvetica Neue"
