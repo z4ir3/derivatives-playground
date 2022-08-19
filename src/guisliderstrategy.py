@@ -47,9 +47,13 @@ class PlotGUI:
         # self.guifont = "Al Nile"
         # self.guifont = "Al Tarikh"
 
+        # Frame reliefs 
+        self.lframe_relief = "flat"
+        self.rframe_relief = "flat"
+
         # Left frame 'Text' Title setup
-        self.title_relif = "flat"   #"raised"
-        self.title_font  = (self.guifont, 20, "bold")
+        self.text_relief = "flat"   #"raised"
+        self.text_font   = (self.guifont, 20, "bold")
 
         # Left frame 'Label' setup
         self.lab_relief = "flat"  #"raised"
@@ -180,10 +184,11 @@ class PlotGUI:
         '''
     
         # Create the left frame and place it in the GUI
-        self.framel = tk.Frame(master = self.root, 
-                                relief      = "flat", #raised" 
-                                bg          = self.lframebg, 
-                                borderwidth = 1)
+        self.framel = tk.Frame(master               = self.root, 
+                                relief              = self.lframe_relief,
+                                bg                  = self.lframebg, 
+                                highlightbackground = self.lframeborderbg,
+                                highlightthickness  = self.lframebordertk)
 
         self.framel.place(relx = self.left_relx, 
                             rely        = self.left_rely, 
@@ -195,7 +200,8 @@ class PlotGUI:
         self.gridcol = 0
 
         # Label "Title" of the frame
-        self.titleframe = self.create_tktext(textheight = 1, textwidth = self.deftextwidth)
+        self.titleframe = self.create_tktext(textheight = 1, 
+                                             textwidth = self.deftextwidth)
         self.config_tktext(self.titleframe, 
                             textmsg  = self.title_lframe, 
                             textrow  = self.gridrow, 
@@ -299,7 +305,9 @@ class PlotGUI:
         Right frame of the GUI with plots
         '''
         # Right main box containing the interactive plot
-        self.framer = tk.Frame(master = self.root, bg=self.rframeplotbg)
+        self.framer = tk.Frame(master   = self.root,
+                                relief  = self.rframe_relief,  
+                                bg      = self.rframeplotbg)
         self.framer.place(relx = self.right_relx, 
                             rely        = self.right_rely, 
                             relwidth    = self.right_relwidth, 
@@ -1720,6 +1728,7 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
 
     def create_tktext(self, 
                         textfont   = None, 
+                        textrelief = None, 
                         textheight = 2, 
                         textwidth  = 85,
                         texthlth   = None):
@@ -1729,11 +1738,11 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
         return tk.Text(master               = self.framel, 
                         height              = textheight,
                         width               = textwidth, 
-                        relief              = self.lab_relief,
+                        relief              = textrelief if textrelief is not None else self.text_relief,
                         bg                  = self.textbg,
                         fg                  = self.textfg,
                         highlightthickness  = texthlth if texthlth is not None else 0,
-                        font                = textfont if textfont is not None else self.title_font)
+                        font                = textfont if textfont is not None else self.text_font)
 
 
     def config_tktext(self,
@@ -1765,19 +1774,26 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
         Set up GUI color palette
         '''
         if palettetype == "light":
+
+            # Main
             self.mainbg       = "#E0DFDF"
+            
+            # Left Frame
             self.lframebg     = "whitesmoke"
 
+            # Widgets background      
             self.labelbg      = self.lframebg 
             self.entrybg      = "white"
             self.textbg       = self.lframebg 
             self.buttonbg     = self.mainbg 
 
+            # Widgets foreground      
             self.labelfg      = "black"
             self.entryfg      = "black"
             self.textfg       = "black"
             self.buttonfg     = "black"
 
+            # Right Frame
             self.rframeplotbg = "#80c1ff"
             self.rframefigbg  = "whitesmoke"
             self.labplotfg    = "black"
@@ -1788,26 +1804,39 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
             self.root.configure(bg=self.mainbg)
 
         elif palettetype == "dark":
+            
+            # Main
             self.mainbg       = "#20222B"
-            self.lframebg     = "#10121A"
 
+            # Left Frame
+            self.lframebg       = "#10121A"
+            self.lframeborderbg = "#292D33"
+            self.lframebordertk = 1
+
+            # Widgets background      
             self.labelbg      = self.lframebg 
             self.entrybg      = "#646773"
             self.textbg       = self.lframebg 
             self.buttonbg     = self.mainbg 
-
+            
+            # Widget foreground
             self.labelfg      = "white"
             self.entryfg      = "white"
             self.textfg       = "white"
             self.buttonfg     = self.lframebg
 
+            # Right Frame
             self.rframeplotbg = self.mainbg 
-            self.rframefigbg  = self.mainbg 
+            self.rframefigbg  = "gray" #self.mainbg 
             self.labplotfg    = "white"
             self.sliderplot   = "gray"
             self.sliderlabfg  = "white"
 
             plt.style.use("seaborn-dark")
             self.root.configure(bg=self.mainbg)
+
         else:
             raise ValueError("Wrong color palette type name ('light' or 'dark'")
+
+
+
