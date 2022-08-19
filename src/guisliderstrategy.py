@@ -48,24 +48,24 @@ class PlotGUI:
         # self.guifont = "Al Tarikh"
 
         # Frame reliefs 
-        self.lframe_relief = "flat"
+        self.lframe_relief = "flat"  #"raised"
         self.rframe_relief = "flat"
 
         # Left frame 'Text' Title setup
-        self.text_relief = "flat"   #"raised"
+        self.text_relief = "flat"
         self.text_font   = (self.guifont, 20, "bold")
 
         # Left frame 'Label' setup
-        self.lab_relief = "flat"  #"raised"
-        self.lab_width  = 13
-        self.lab_height = 1
-        self.lab_font   = (self.guifont, 14, "normal")
+        self.label_relief = "flat"  
+        self.label_width  = None
+        self.label_height = 1
+        self.label_font   = (self.guifont, 14, "normal")
 
         # Left frame 'Entry' setup
-        self.ent_htick  = 2, 
-        self.ent_bordw  = 0
-        self.ent_width  = 10
-        self.ent_font   = ("Helvetica Neue", 14, "normal")
+        self.entry_htick  = 1, 
+        self.entry_border = 0
+        self.entry_width  = 9
+        self.entry_font   = ("Helvetica Neue", 14, "normal")
 
         # Location of the frames for a symmetric frame layout
         
@@ -210,19 +210,19 @@ class PlotGUI:
         self.gridrow = 1
 
         # Label "Initial Data"
-        self.label_idata = self.create_tklabel(labeltext = "Initial Data:")
+        self.label_idata = self.create_tklabel(labelwidth = 13, labeltext = "Initial Data:")
         self.config_tklabel(self.label_idata, labelpady = self.first_row_padys)
 
         self.gridcol = self.gridcol + 1
 
         # Label Underlying Price
-        self.label_S = self.create_tklabel(labeltext = "Underlying Price")
+        self.label_S = self.create_tklabel(labelwidth = 13, labeltext = "Underlying Price")
         self.config_tklabel(self.label_S, labelpady = self.first_row_padys) 
 
         self.gridcol = self.gridcol + 1
 
         # Label Strike Price
-        self.label_r = self.create_tklabel(labeltext = "Interest Rate(%)")
+        self.label_r = self.create_tklabel(labelwidth = 13, labeltext = "Interest Rate(%)")
         self.config_tklabel(self.label_r, labelpady = self.first_row_padys) 
 
         self.gridcol = self.gridcol + 1
@@ -234,7 +234,7 @@ class PlotGUI:
         self.gridcol = self.gridcol + 1
 
         # Label Maturity
-        self.label_T = self.create_tklabel(labelwidth = 22, labeltext = "Strategy Expiration (years)")
+        self.label_T = self.create_tklabel(labelwidth = 22, labeltext = "Expiration (years)")
         self.config_tklabel(self.label_T, labelpady = self.first_row_padys)
 
 
@@ -277,7 +277,7 @@ class PlotGUI:
         self.gridcol = 0
 
         # Label "choose strategy"
-        self.label_strat = self.create_tklabel(labelfont = (self.lab_font[0], self.lab_font[1], "bold"),
+        self.label_strat = self.create_tklabel(labelfont = (self.label_font[0], self.label_font[1], "bold"),
                                                 labelwidth = 16, 
                                                 labeltext = self.choose_strat_label_name)
         self.config_tklabel(self.label_strat, labelpady = self.second_row_padys) 
@@ -305,9 +305,11 @@ class PlotGUI:
         Right frame of the GUI with plots
         '''
         # Right main box containing the interactive plot
-        self.framer = tk.Frame(master   = self.root,
-                                relief  = self.rframe_relief,  
-                                bg      = self.rframeplotbg)
+        self.framer = tk.Frame(master               = self.root,
+                                relief              = self.rframe_relief,  
+                                bg                  = self.rframeplotbg,
+                                highlightbackground = self.rframeborderbg,
+                                highlightthickness  = self.rframebordertk)
         self.framer.place(relx = self.right_relx, 
                             rely        = self.right_rely, 
                             relwidth    = self.right_relwidth, 
@@ -510,8 +512,8 @@ class PlotGUI:
                                                     buttontext = self.calculate_button_name,
                                                     buttonfont = (self.guifont,13,"bold"))
         self.config_tkbutton(self.calculatebutton, 
-                             buttonrow = self.defcontrolrow, 
-                             buttoncol = 4, 
+                             buttonrow  = self.defcontrolrow, 
+                             buttoncol  = 4, 
                              buttonpady = self.pady)
 
         # Depending on what strategy is chosen (a pre-defined one or the custom one): 
@@ -530,20 +532,24 @@ class PlotGUI:
             self.addoption_times = 0
         
             # "Add Option" button used to insert options data in the "Custom strategy"            
-            self.addoptionbutton = self.create_tkbutton(buttoncmd = self.adding_options, buttontext=self.add_options_button_name)
+            self.addoptionbutton = self.create_tkbutton(buttoncmd  = self.adding_options, 
+                                                        buttontext = self.add_options_button_name,
+                                                        buttonfont = (self.guifont,13,"normal"))
             self.config_tkbutton(self.addoptionbutton, 
-                                buttonrow = self.defcontrolrow, 
-                                buttoncol = 2, 
-                                buttoncolspan = 1, 
-                                buttonpady = self.pady)
+                                buttonrow       = self.defcontrolrow, 
+                                buttoncol       = 2, 
+                                buttoncolspan   = 1, 
+                                buttonpady      = self.pady)
 
             # "Reset Strategy" button used to reset the strategy inserted (remove all options data)            
-            self.resetstratbutton = self.create_tkbutton(buttoncmd = self.remove_options, buttontext=self.reset_strat_button_name)
+            self.resetstratbutton = self.create_tkbutton(buttoncmd  = self.remove_options, 
+                                                         buttontext = self.reset_strat_button_name,
+                                                         buttonfont = (self.guifont,13,"normal"))
             self.config_tkbutton(self.resetstratbutton, 
-                                buttonrow = self.defcontrolrow, #2, 
-                                buttoncol = 3, 
-                                buttoncolspan = 1, 
-                                buttonpady = self.pady)
+                                buttonrow       = self.defcontrolrow, 
+                                buttoncol       = 3, 
+                                buttoncolspan   = 1, 
+                                buttonpady      = self.pady)
 
         else:
             # If "Custom strategy" is not chosen, then the button "Add Option" and the "Reset Strategy" are removed from the frame's grid
@@ -1130,7 +1136,7 @@ class PlotGUI:
 
             # Strategy name
             self.stratname = self.create_tklabel(labeltext = self.chosen_strategy,
-                                                 labelfont = (self.lab_font[0], self.lab_font[1], "bold"))
+                                                 labelfont = (self.label_font[0], self.label_font[1], "bold"))
             self.config_tklabel(self.stratname, 
                                 labelrow = self.gridrow, 
                                 labelcol = 0, 
@@ -1143,7 +1149,7 @@ class PlotGUI:
             self.stratdesc = self.strategy_description()
             self.predefopt_desc = self.create_tktext(textheight = self.stratdesc["nrows"], 
                                                      textwidth = self.deftextwidth,
-                                                     textfont  = self.lab_font)
+                                                     textfont  = self.label_font)
             self.config_tktext(self.predefopt_desc, 
                                 textmsg     = self.stratdesc["msg"], 
                                 textrow     = self.gridrow, 
@@ -1169,7 +1175,7 @@ class PlotGUI:
 
                 self.gridrow = self.gridrow + 1
 
-                self.optdescription = self.create_tklabel(labeltext = stratdesc)
+                self.optdescription = self.create_tklabel(labelwidth = 90, labeltext = stratdesc)
                 self.config_tklabel(self.optdescription, 
                                     labelrow = self.gridrow,
                                     labelcol = 0, 
@@ -1583,13 +1589,14 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
         Create a tkinter Label
         '''
         return tk.Label(master  = self.framel, 
-                        width   = None if labelwidth is None else labelwidth,  
+                        # width   = None if labelwidth is None else labelwidth,  
+                        width   = labelwidth if labelwidth is not None else self.label_width,
                         text    = labeltext,
-                        relief  = self.lab_relief,
+                        relief  = self.label_relief,
                         bg      = self.labelbg,
                         fg      = self.labelfg,
-                        height  = self.lab_height,
-                        font    = labelfont if labelfont is not None else self.lab_font,
+                        height  = self.label_height,
+                        font    = labelfont if labelfont is not None else self.label_font,
                         anchor  = "w")
 
 
@@ -1631,12 +1638,13 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
         Create a tkinter Entry
         '''
         return tk.Entry(master              = self.framel, 
-                        width               = self.ent_width, 
-                        font                = self.ent_font,
+                        width               = self.entry_width, 
+                        font                = self.entry_font,
                         bg                  = self.entrybg, 
                         fg                  = self.entryfg,
-                        highlightthickness  = self.ent_htick, 
-                        borderwidth         = self.ent_bordw)
+                        border              = self.entry_border,  
+                        highlightthickness  = self.entry_htick, 
+                        highlightbackground = self.entrybordbg)
 
 
     def config_tkentry(self,
@@ -1779,11 +1787,14 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
             self.mainbg       = "#E0DFDF"
             
             # Left Frame
-            self.lframebg     = "whitesmoke"
+            self.lframebg       = "whitesmoke"
+            self.lframeborderbg = None
+            self.lframebordertk = None
 
             # Widgets background      
             self.labelbg      = self.lframebg 
             self.entrybg      = "white"
+            self.entrybordbg  = "#292D33"
             self.textbg       = self.lframebg 
             self.buttonbg     = self.mainbg 
 
@@ -1794,8 +1805,12 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
             self.buttonfg     = "black"
 
             # Right Frame
-            self.rframeplotbg = "#80c1ff"
-            self.rframefigbg  = "whitesmoke"
+            self.rframeplotbg   = "#80c1ff"
+            self.rframefigbg    = "whitesmoke"
+            self.rframeborderbg = None
+            self.rframebordertk = None
+
+            # Right Frame plot
             self.labplotfg    = "black"
             self.sliderplot   = "gray"
             self.sliderlabfg  = "black"
@@ -1806,28 +1821,33 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
         elif palettetype == "dark":
             
             # Main
-            self.mainbg       = "#20222B"
+            self.mainbg       = "#010000"
 
             # Left Frame
-            self.lframebg       = "#10121A"
+            self.lframebg       = "#141416"
             self.lframeborderbg = "#292D33"
             self.lframebordertk = 1
 
             # Widgets background      
             self.labelbg      = self.lframebg 
-            self.entrybg      = "#646773"
+            self.entrybg      = "#E4EBE5"
+            self.entrybordbg  = "#292D33"
             self.textbg       = self.lframebg 
             self.buttonbg     = self.mainbg 
             
             # Widget foreground
             self.labelfg      = "white"
-            self.entryfg      = "white"
+            self.entryfg      = "black"
             self.textfg       = "white"
             self.buttonfg     = self.lframebg
 
             # Right Frame
-            self.rframeplotbg = self.mainbg 
-            self.rframefigbg  = "gray" #self.mainbg 
+            self.rframeplotbg   = self.lframebg 
+            self.rframefigbg    = self.lframebg  
+            self.rframeborderbg = "#292D33"
+            self.rframebordertk = 1
+
+            # Right Frame plot
             self.labplotfg    = "white"
             self.sliderplot   = "gray"
             self.sliderlabfg  = "white"
@@ -1837,6 +1857,3 @@ This is a strategy similar to a Bottom Strangle even though profits are limited.
 
         else:
             raise ValueError("Wrong color palette type name ('light' or 'dark'")
-
-
-

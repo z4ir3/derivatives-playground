@@ -12,8 +12,8 @@ from src.guisliderstrategy import PlotGUI
 def main_gui():
     root = tk.Tk()
 
-    # colorpalette = "light"
-    colorpalette = "dark"
+    colorpalette = "light"
+    # colorpalette = "dark"
     Gui = PlotGUI(root, colorpalette)
     
     Gui.root.mainloop()
