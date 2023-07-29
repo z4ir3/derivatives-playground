@@ -16,6 +16,9 @@ plt.style.use("seaborn-dark")
 
 from models.blackscholes import BSOption
 
+# Install mplcursors: pip install mplcursors
+import mplcursors
+
 class PlotGUI:
     '''
     GUI for Black-Scholes option pricing plots
@@ -563,12 +566,23 @@ where
         
         # Plot
         self.p0, = self.ax[0].plot(self.Sset, self.prices,  color="tab:blue")
+        mplcursors.cursor(self.p0, hover=False)  # It gives better usability of the plots
+        
         self.p1, = self.ax[1].plot(self.Sset, self.lambdas, color="chocolate")
+        mplcursors.cursor(self.p1, hover=False)
+        
         self.p2, = self.ax[2].plot(self.Sset, self.deltas,  color="tab:red")
+        mplcursors.cursor(self.p2, hover=False)
+        
         self.p3, = self.ax[3].plot(self.Sset, self.gammas,  color="sandybrown")
+        mplcursors.cursor(self.p3, hover=False)
+        
         self.p4, = self.ax[4].plot(self.Sset, self.thetas,  color="gray")
+        mplcursors.cursor(self.p4, hover=False)
+        
         self.p5, = self.ax[5].plot(self.Sset, self.vegas,   color="forestgreen")
-
+        mplcursors.cursor(self.p5, hover=False)
+        
         # Set x-labels
         xfontsize = 9
         self.ax[0].set_xlabel("Underlying $S$ (Strike={:.0f})".format(self.K), fontsize=xfontsize)
